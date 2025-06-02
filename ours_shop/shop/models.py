@@ -62,7 +62,7 @@ class Product(models.Model):
     name = models.CharField(max_length=40, verbose_name="نام")
     description = models.CharField(max_length=50, blank=True, null=True, verbose_name="شرح")
     price = models.DecimalField(default=0, decimal_places=2, max_digits=12, verbose_name="قیمت")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="دستهبندی")
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1, verbose_name="دستهبندی")
     picture = models.ImageField(upload_to=upload_image, verbose_name="تصویر")
 
     class Meta:
