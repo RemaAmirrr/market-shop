@@ -21,7 +21,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('shop/', include("shop.Urls")),
+    path('', include("shop.Urls"), name="shop"),
 ]
 # command for run and make all file like static and media is "py manage.py collectstatic" but 
 # you should make any folder with assets name in project

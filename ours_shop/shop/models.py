@@ -45,7 +45,11 @@ def upload_image(instance, filename):
 class Category(models.Model):
     name = models.CharField(max_length=20)
 
-    def __str_(self):
+    class Meta:
+        verbose_name="دسته"
+        verbose_name_plural="دسته بندی"
+
+    def __str__(self):
         return self.name
 
 class Customer(models.Model):
@@ -55,15 +59,21 @@ class Customer(models.Model):
     email = models.EmailField(max_length=100)
     password = models.CharField(max_length=50)
 
-    def __str_(self):
+    def __str__(self):
         return f'(self.first_name) (self.last_name)'
     
 class Product(models.Model):
     name = models.CharField(max_length=40, verbose_name="نام")
     description = models.CharField(max_length=50, blank=True, null=True, verbose_name="شرح")
-    price = models.DecimalField(default=0, decimal_places=2, max_digits=12, verbose_name="قیمت")
+    price = models.DecimalField(default=0, decimal_places=0, max_digits=12, verbose_name="قیمت")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1, verbose_name="دستهبندی")
     picture = models.ImageField(upload_to=upload_image, verbose_name="تصویر")
+    especial = models.BooleanField(default=False)
+    active = models.BooleanField(default=False)
+    newst = models.BooleanField(default=False)
+    full_sale = models.BooleanField(default=False)
+    offer = models.BooleanField(default=False)
+    
 
     class Meta:
         verbose_name="محصول"

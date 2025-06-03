@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # my install app
+    # all app that installed
+    'django.contrib.humanize', 
+
+    # all app that we make
     'shop',
 ]
 
