@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 import datetime
 import os
 import random
@@ -66,8 +67,10 @@ class Product(models.Model):
     name = models.CharField(max_length=40, verbose_name="نام")
     description = models.CharField(max_length=50, blank=True, null=True, verbose_name="شرح")
     price = models.DecimalField(default=0, decimal_places=0, max_digits=12, verbose_name="قیمت")
+    sale_price = models.DecimalField(default=0, decimal_places=0, max_digits=12, verbose_name="فیمت ویژه")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1, verbose_name="دستهبندی")
     picture = models.ImageField(upload_to=upload_image, verbose_name="تصویر")
+    star = models.IntegerField(default=0, validators=[MaxValueValidator(5), MinValueValidator(0)])
     especial = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
     newst = models.BooleanField(default=False)

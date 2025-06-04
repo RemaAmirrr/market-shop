@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # all app that installed
-    'django.contrib.humanize', 
+    'django.contrib.humanize',
+    'django_render_partial', 
 
     # all app that we make
     'shop',

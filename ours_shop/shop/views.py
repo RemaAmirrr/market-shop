@@ -9,6 +9,6 @@ def get_products(request):
         "products":products
     }
 
-    return render(request, "index.html", context)
+    return render(request, "home.html", context)
 
 # Create your views here.

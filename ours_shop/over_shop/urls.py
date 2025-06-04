@@ -18,10 +18,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from .view import header, footer, about_us, contact_us
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("shop.Urls"), name="shop"),
+    path('header', header, name="header"),
+    path('footer', footer, name="footer"),
+    path('about_us', about_us, name="about_us"),
+    path('contact_us', contact_us, name="contact_us"),
+    
 ]
 # command for run and make all file like static and media is "py manage.py collectstatic" but 
 # you should make any folder with assets name in project
