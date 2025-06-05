@@ -14,6 +14,15 @@ class LoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={"class" : "form-control", "placeholder": "place input you username"})) 
     password = forms.CharField(widget=forms.PasswordInput(attrs={"class" : "form-control"}))   
 
+    def clean_username(self):
+        userName = self.cleaned_data.get("username")
+        passWord = self.cleaned_data.get("password")
+        query = user.objects.filter(username=userName, password=passWord).all()
+
+        if query.exists():
+             raise forms.ValidationError("پسورد یا نام کاربری اشتباه است")              
+        return userName
+
 user = get_user_model()
 class RegisterForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={"class" : "form-control"}), validators=[ 

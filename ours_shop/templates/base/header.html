@@ -92,10 +92,17 @@
             </div>
           </div>
           <div id="top-links" class="nav pull-right flip">
+          {% if request.user.is_authenticated %}
             <ul>
-              <li><a href="{% url 'log_in'%}">ورود</a></li>
-              <li><a href="{% url 'register' %}">ثبت نام</a></li>
-            </ul>
+              <li class="ml-5"><a href="{% url 'log_out' %}">خروج</a></li>
+              <li class="ml-5"><a href="">حساب کاربری</a></li>
+            </ul>  
+          {% else %} 
+              <ul>
+                <li><a href="{% url 'log_in'%}">ورود</a></li>
+                <li><a href="{% url 'register' %}">ثبت نام</a></li>
+              </ul> 
+          {% endif %}    
           </div>
         </div>
       </div>

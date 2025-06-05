@@ -3,12 +3,16 @@ from .models import Product
 
 def get_products(request):
     
-    products = Product.objects.all()
-
+    products = Product.objects.filter(especial=True).all
     context={
         "products":products
     }
-
     return render(request, "home.html", context)
 
-# Create your views here.
+def product(request, pk):
+    
+    product = Product.objects.get(id=pk)
+    context = {
+        "product": product
+    }
+    return render(request, "product.html", context)

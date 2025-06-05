@@ -1,5 +1,4 @@
-
-    
+  
 {% extends "base/base.html" %}
 {% load static %}
 {% load humanize %}
@@ -43,9 +42,9 @@
       <div class="owl-carousel product_carousel_tab">
         {% for item in products %}
             <div class="product-thumb clearfix">
-              <div class="image"><a href="product.html"><img src="{{item.picture.url}}" alt="تی شرت کتان مردانه" title="تی شرت کتان مردانه" class="img-responsive" /></a></div>
+              <div class="image"><a href="{% url 'product' item.id %}"><img src="{{item.picture.url}}" alt="تی شرت کتان مردانه" title="تی شرت کتان مردانه" class="img-responsive" /></a></div>
               <div class="caption">
-                <h4><a href="product.html">{{item.name}}</a></h4>
+                <h4><a href="{% url 'product' item.id %}">{{item.name}}</a></h4>
                     <div class="d-flex justify-content-center small text-warning mb-2">
                         {% with ''|center:item.star as range %}
                           {% for _ in range %}
