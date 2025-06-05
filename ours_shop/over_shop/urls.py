@@ -23,6 +23,7 @@ from .view import header, footer, about_us, contact_us
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("shop.Urls"), name="shop"),
+    path('auth/', include("auth.Urls"), name="auth"),
     path('header', header, name="header"),
     path('footer', footer, name="footer"),
     path('about_us', about_us, name="about_us"),
