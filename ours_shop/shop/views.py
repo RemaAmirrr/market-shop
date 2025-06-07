@@ -16,6 +16,7 @@ def product(request, pk):
     product = Products.objects.get(id=pk)
     especial_product = Products.objects.filter(especial=True)
     
+    
     context = {
         "product": product,
         "full_sale" : full_sale,
