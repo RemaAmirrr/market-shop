@@ -63,7 +63,7 @@ class Customer(models.Model):
     def __str__(self):
         return f'(self.first_name) (self.last_name)'
     
-class Product(models.Model):
+class Products(models.Model):
     name = models.CharField(max_length=40, verbose_name="نام")
     description = models.CharField(max_length=50, blank=True, null=True, verbose_name="شرح")
     price = models.DecimalField(default=0, decimal_places=0, max_digits=12, verbose_name="قیمت")
@@ -86,7 +86,7 @@ class Product(models.Model):
         return self.name 
     
 class Order(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE) 
     quantity = models.IntegerField(default=1)
     address = models.CharField(default='', max_length=400, blank=True)

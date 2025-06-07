@@ -166,7 +166,7 @@
                         </tr>
                       </tbody>
                     </table>
-                    <p class="checkout"><a href="cart.html" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> مشاهده سبد</a>&nbsp;&nbsp;&nbsp;<a href="checkout.html" class="btn btn-primary"><i class="fa fa-share"></i> تسویه حساب</a></p>
+                    <p class="checkout"><a href="{% url 'cart_summery' %}" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> مشاهده سبد</a>&nbsp;&nbsp;&nbsp;<a href="checkout.html" class="btn btn-primary"><i class="fa fa-share"></i> تسویه حساب</a></p>
                   </div>
                 </li>
               </ul>
@@ -191,7 +191,7 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav">
             <li><a class="home_link" title="خانه" href="{% url 'get_products' %}">خانه</a></li>
-            <li class="dropdown"><a href="category.html">مد و زیبایی</a>
+            <li class="dropdown"><a href="{% url 'category' 'cloths' %}">مد و زیبایی</a>
               <div class="dropdown-menu">
               <ul>
                       <li><a href="category.html">آقایان <span>&rsaquo;</span></a>
@@ -227,7 +227,7 @@
                     </ul>
               </div>
             </li>
-            <li class="dropdown"> <a href="category.html">الکترونیکی</a>
+            <li class="dropdown"> <a href="{% url 'category' 'laps' %}">الکترونیکی</a>
                   <div class="dropdown-menu">
                     <ul>
                       <li> <a href="category.html">لپ تاپ <span>&rsaquo;</span></a>
@@ -248,7 +248,7 @@
                           </ul>
                         </div>
                       </li>
-                      <li> <a href="category.html">دوربین <span>&rsaquo;</span></a>
+                      <li> <a href="{% url 'category' 'cameras' %}">دوربین <span>&rsaquo;</span></a>
                         <div class="dropdown-menu">
                           <ul>
                             <li> <a href="category.html">زیردسته های جدید</a></li>
@@ -275,7 +275,7 @@
                     </ul>
                   </div>
                 </li>
-                <li class="dropdown"><a href="category.html">کفش</a>
+                <li class="dropdown"><a href="{% url 'category' 'shoes' %}">کفش</a>
                   <div class="dropdown-menu">
                     <ul>
                       <li><a href="category.html">آقایان</a> </li>
@@ -302,7 +302,7 @@
                     </ul>
                   </div>
                 </li>
-                <li class="dropdown"> <a href="category.html">ساعت</a>
+                <li class="dropdown"> <a href="{% url 'category' 'watchs' %}">ساعت</a>
                   <div class="dropdown-menu">
                     <ul>
                       <li> <a href="category.html">ساعت مردانه</a></li>
@@ -312,7 +312,7 @@
                     </ul>
                   </div>
                 </li>
-                <li class="dropdown"><a href="category.html">زیبایی و سلامت</a>
+                <li class="dropdown"><a href="{% url 'category' 'makeup' %}">زیبایی و سلامت</a>
                   <div class="dropdown-menu">
                     <ul>
                       <li> <a href="category.html">عطر و ادکلن</a></li>
