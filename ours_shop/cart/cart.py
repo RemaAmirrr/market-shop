@@ -15,8 +15,12 @@ class Cart:
             pass
         else:
             self.cart[product_id] = {'price' : str(product.price)}
-
         self.session.modified = True            
 
     def __len__(self):
         return len(self.cart) 
+    
+    def get_prads(self):
+        product_ids = self.cart.keys()
+        products = Products.objects.filter(id__in=product_ids)
+        return products

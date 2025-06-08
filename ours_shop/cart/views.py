@@ -4,7 +4,11 @@ from shop.models import Products
 from django.http import JsonResponse
 
 def cart_summery(request):
-    return render (request, "cart.html", {})
+    cart = Cart(request)
+    cart_products = cart.get_prads()
+    return render (request, "cart.html", {'cart_products':cart_products})
+
+
 
 def add_cart(request):
     cart = Cart(request)

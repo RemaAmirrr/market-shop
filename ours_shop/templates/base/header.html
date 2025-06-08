@@ -127,24 +127,20 @@ crossorigin="anonymous"></script>
               <span id="cart-total">{{cart|length}}م - 132000 تومان</span></button>
               <ul class="dropdown-menu">
                 <li>
+                {% for item in cart_products %}
                   <table class="table">
                     <tbody>
                       <tr>
-                        <td class="text-center"><a href="product.html"><img class="img-thumbnail" title="کفش راحتی مردانه" alt="کفش راحتی مردانه" src="{% static 'image/product/sony_vaio_1-50x75.jpg'%}"></a></td>
-                        <td class="text-left"><a href="product.html">کفش راحتی مردانه</a></td>
+                        <td class="text-center"><a href="product.html"><img class="img-thumbnail" title="کفش راحتی مردانه" 
+                          style="width: 80px; height: 80px;" alt="کفش راحتی مردانه" src="{{item.picture.url}}"></a></td>
+                        <td class="text-left"><a href="product.html">{{item.name}}</a></td>
                         <td class="text-right">x 1</td>
-                        <td class="text-right">32000 تومان</td>
-                        <td class="text-center"><button class="btn btn-danger btn-xs remove" title="حذف" onClick="" type="button"><i class="fa fa-times"></i></button></td>
-                      </tr>
-                      <tr>
-                        <td class="text-center"><a href="product.html"><img class="img-thumbnail" title="تبلت ایسر" alt="تبلت ایسر" src="{% static 'image/product/samsung_tab_1-50x75.jpg'%}"></a></td>
-                        <td class="text-left"><a href="product.html">تبلت ایسر</a></td>
-                        <td class="text-right">x 1</td>
-                        <td class="text-right">98000 تومان</td>
+                        <td class="text-right">{{item.price}} تومان</td>
                         <td class="text-center"><button class="btn btn-danger btn-xs remove" title="حذف" onClick="" type="button"><i class="fa fa-times"></i></button></td>
                       </tr>
                     </tbody>
                   </table>
+                {% endfor %}  
                 </li>
                 <li>
                   <div>
