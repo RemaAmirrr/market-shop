@@ -24,26 +24,42 @@
                         <td class="text-center">تصویر</td>
                         <td class="text-left">نام محصول</td>
                         <td class="text-left">مدل</td>
-                        <td class="text-left">تعداد</td>
                         <td class="text-right">قیمت واحد</td>
                         <td class="text-right">کل</td>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td class="text-center"><a href="product.html"><img src="{{item.picture.url}}"  style="width: 100px; height: 100px;" alt="{{item.name}}" title="تبلت ایسر" class="img-thumbnail" /></a></td>
-                        <td class="text-left"><a href="product.html"> {{item.name}}</a><br />
-                        <small>امتیازات خرید: 1000</small></td>
-                        <td class="text-left">{{item.id}}</td>
-                        <td class="text-left"><div class="input-group btn-block quantity">
-                            <input type="text" name="quantity" value="1" size="1" class="form-control" />
-                            <span class="input-group-btn">
-                            <button type="submit" data-toggle="tooltip" title="بروزرسانی" class="btn btn-primary"><i class="fa fa-refresh"></i></button>
-                            <button type="button" data-toggle="tooltip" title="حذف" class="btn btn-danger" onClick=""><i class="fa fa-times-circle"></i></button>
-                            </span></div></td>
-                        <td class="text-right">{{item.price}} تومان</td>
-                        <td class="text-right">{{item.price}} تومان</td>
-                    </tr>
+                        <tr>
+                            <td class="text-center"><a href="{% url 'product' item.id %}" ><img src="{{ item.picture.url}}"
+                               style="width: 100px; height: 100px;" alt="{{ item.name }}" title="تبلت ایسر" class="img-thumbnail"></a></td>
+                            <td class="text-left col-sm-1">
+                            <small>{{ item.name }}</small></td>
+                            <td class="text-left">
+                              <div class="input-group btn-block quantity">
+                                <select class="form-select col-md-3" id="select{{item.id}}">
+                                  {% for key,value in quantities.items %}
+                                      {% if key == item.id|slugify %}
+                                       <option selected> {{ value }} </option> 
+                                      {% endif %}
+                                  {% endfor %}            
+                              <option value="1">1</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                            </select> 
+                                <span class="input-group-btn">
+                                 <button type="button" data-index={{item.id}} class="btn btn-primary update-cart">ویرایش</button>
+                                 <button type="button" data-index={{item.id}} class="btn btn-danger delete-product">حذف</button>
+                                </span></div></td>
+                            {% if item.especial %}    
+                                 <td class="text-right">{{ item.sale_price }}</td>
+                            {% else %}
+                                <td class="text-right">{{ item.price }}</td>
+                            {% endif %}    
+                            <td class="text-right">
+                         
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
              {% endfor %}   
@@ -486,11 +502,7 @@
                 <table class="table table-bordered">
                     <tr>
                     <td class="text-right"><strong>جمع کل:</strong></td>
-                    <td class="text-right">132000 تومان</td>
-                    </tr>
-                    <tr>
-                    <td class="text-right"><strong>کسر هدیه:</strong></td>
-                    <td class="text-right">4000 تومان</td>
+                    <td class="text-right">{{ total }} تومان</td>
                     </tr>
                     <tr>
                     <td class="text-right"><strong>مالیات:</strong></td>
@@ -498,7 +510,7 @@
                     </tr>
                     <tr>
                     <td class="text-right"><strong>کل :</strong></td>
-                    <td class="text-right">139880 تومان</td>
+                    <td class="text-right">{{ total }} تومان</td>
                     </tr>
                 </table>
                 </div>
@@ -512,4 +524,49 @@
         </div>
         </div>
     </div>
+    <script>
+        $(document).on('click', '.update-cart', function(e){
+         e.preventDefault();
+    
+         var productid = $(this).data('index')
+         $.ajax({
+           type: 'POST',
+           url: '{% url "cart_update" %}',
+           data: {
+             product_id:  $(this).data('index'),
+             product_qty: $('#select' + productid + ' option:selected').text(),
+             csrfmiddlewaretoken: '{{ csrf_token }}',
+             action: 'post'
+           },
+           success: function(json){
+             // console.log(json)
+            // document.getElementById("").textContent=json(qty)
+            location.reload();
+           },
+           error: function(xhr, errmsg, err){
+           }
+         })
+        })
+    
+        $(document).on('click', '.delete-product', function(e){
+         e.preventDefault();
+    
+         $.ajax({
+           type: 'POST',
+           url: '{% url "cart_delete" %}',
+           data: {
+             product_id:  $(this).data('index'),
+             csrfmiddlewaretoken: '{{ csrf_token }}',
+             action: 'post'
+           },
+           success: function(json){
+             // console.log(json)
+            // document.getElementById("").textContent=json(qty)
+            location.reload();
+           },
+           error: function(xhr, errmsg, err){
+           }
+         })
+        })
+     </script> 
 {% endblock %}

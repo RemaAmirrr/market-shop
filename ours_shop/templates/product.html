@@ -63,6 +63,7 @@
                     </div>
                     <div class="cart">
                         <div>
+                        {% comment %}
                         <div class="qty">
                             <label class="control-label" for="input-quantity">تعداد</label>
                             <input type="text" name="quantity" value="1" size="2" id="input-quantity" class="form-control" />
@@ -70,7 +71,16 @@
                             <a class="qtyBtn mines" href="javascript:void(0);">-</a>
                             <div class="clear"></div>
                         </div>
-                        <button type="button" id="add-cart" value="{{product.id}}" class="btn btn-primary btn-lg">افزودن به سبد</button>
+                        {% endcomment %}
+                        <select class="form-select" id="cart-qty">
+                            
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                        </select> 
+                        <button type="button" value="{{product.id}}" style="border-radius: 5px; margin-left: 15px; padding: 8px;" 
+                        id="cart_add" class="btn btn-primary btn-lg col-md-8">افزودن به سبد</button>
                         </div>
                         <div>
                         <button type="button" class="wishlist" onClick=""><i class="fa fa-heart"></i> افزودن به علاقه مندی ها</button>
@@ -351,10 +361,10 @@
         {% for item in full_sale %}
           <div class="side-item">
             <div class="product-thumb clearfix">
-              <div class="image"><a href="product.html"><img src={{item.picture.url}} alt="تی شرت کتان مردانه" title="تی شرت کتان مردانه" class="img-responsive" /></a></div>
+              <div class="image"><a href="{% url 'product' item.id %}"><img src={{item.picture.url}} alt="تی شرت کتان مردانه" title="تی شرت کتان مردانه" class="img-responsive" /></a></div>
               <div class="caption">
                 {% if item.especial %}
-                <h4><a href="product.html">{{item.name}}</a></h4>
+                <h4><a href="{% url 'product' item.id %}">{{item.name}}</a></h4>
                 <p class="price"><span class="price-new">{{item.sale_price}}</span> <span class="price-old">{{item.price}}</span> <span class="saving">-10%</span></p>
                 {% else %}
                 <h4><a href="product.html">{{item.name}}</a></h4>
@@ -388,19 +398,21 @@
     </div>
   </div>
   <script>
-    $(document).on ('click', '#add-cart', function(e){
+    $(document).on ('click', '#cart_add', function(e){
       e.preventDefault();
 
       $.ajax({
         type: 'POST',
         url: "{% url 'add_cart'%}",
         data: {
-          product_id: $('#add-cart').val(),
+          product_id: $('#cart_add').val(),
+          product_qty: $('#cart-qty option:selected').text(),
           csrfmiddlewaretoken: '{{ csrf_token }}',
           action: 'post'
         },
         success: function(json){
           //console.log(json)
+          location.reload();
           
         },
         error: function(xhr, errmsg, err){

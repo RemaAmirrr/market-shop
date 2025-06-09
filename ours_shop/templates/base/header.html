@@ -124,19 +124,27 @@ crossorigin="anonymous"></script>
             <div id="cart">
               <button type="button" data-toggle="dropdown" data-loading-text="بارگذاری ..." class="heading dropdown-toggle">
               <span class="cart-icon pull-left flip"></span>
-              <span id="cart-total">{{cart|length}}م - 132000 تومان</span></button>
+              <span id="cart-total">{{cart|length}}م - {{total}} تومان</span></button>
               <ul class="dropdown-menu">
                 <li>
-                {% for item in cart_products %}
+                {% for item in Products %}
                   <table class="table">
                     <tbody>
                       <tr>
-                        <td class="text-center"><a href="product.html"><img class="img-thumbnail" title="کفش راحتی مردانه" 
+                        <td class="text-center"><a href="{% url 'product' item.id %}"><img class="img-thumbnail" title="کفش راحتی مردانه" 
                           style="width: 80px; height: 80px;" alt="کفش راحتی مردانه" src="{{item.picture.url}}"></a></td>
-                        <td class="text-left"><a href="product.html">{{item.name}}</a></td>
-                        <td class="text-right">x 1</td>
-                        <td class="text-right">{{item.price}} تومان</td>
-                        <td class="text-center"><button class="btn btn-danger btn-xs remove" title="حذف" onClick="" type="button"><i class="fa fa-times"></i></button></td>
+                        <td class="text-left"><a href="{% url 'product' item.id %}">{{item.name}}</a></td>
+                        {% for key,value in count.items %}
+                          {% if key == item.id|slugify %}
+                          <td class="text-right">{{value}}</td>
+                          {% endif %} 
+                        {% endfor %}
+                        {% if item.especial %}
+                          <td class="text-right">{{item.sale_price}} تومان</td>
+                        {% else %}
+                          <td class="text-right">{{item.price}} تومان</td>
+                        {% endif %}
+                        <td class="text-center"><button class="btn btn-danger delete-product"  data-index={{item.id}} title="حذف" onClick="" type="button"><i class="fa fa-times"></i></button></td>
                       </tr>
                     </tbody>
                   </table>
@@ -148,11 +156,7 @@ crossorigin="anonymous"></script>
                       <tbody>
                         <tr>
                           <td class="text-right"><strong>جمع کل</strong></td>
-                          <td class="text-right">132000 تومان</td>
-                        </tr>
-                        <tr>
-                          <td class="text-right"><strong>کسر هدیه</strong></td>
-                          <td class="text-right">4000 تومان</td>
+                          <td class="text-right">{{total}} تومان</td>
                         </tr>
                         <tr>
                           <td class="text-right"><strong>مالیات</strong></td>
@@ -160,7 +164,7 @@ crossorigin="anonymous"></script>
                         </tr>
                         <tr>
                           <td class="text-right"><strong>قابل پرداخت</strong></td>
-                          <td class="text-right">139880 تومان</td>
+                          <td class="text-right">{{total}}تومان</td>
                         </tr>
                       </tbody>
                     </table>
@@ -402,4 +406,25 @@ crossorigin="anonymous"></script>
       <!-- Main آقایانu End-->
     </div>
     <!-- Header End-->
+    <script>
+      $(document).on('click', '.delete-product', function(e){
+         e.preventDefault();
+         $.ajax({
+           type: 'POST',
+           url: '{% url "cart_delete" %}',
+           data: {
+             product_id:  $(this).data('index'),
+             csrfmiddlewaretoken: '{{ csrf_token }}',
+             action: 'post'
+           },
+           success: function(json){
+             // console.log(json)
+            // document.getElementById("").textContent=json(qty)
+            location.reload();
+           },
+           error: function(xhr, errmsg, err){
+           }
+         })
+        })
+    </script>
  

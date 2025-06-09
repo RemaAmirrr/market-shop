@@ -3,10 +3,17 @@ from django.shortcuts import render
 
 
 def header(request):
+
+    # setting = Setting_site.objects.first()
     cart = Cart(request)
-    cart_products = cart.get_prads()
+    total = cart.get_total()
+    Products = cart.get_prods()
+    count = cart.get_quants()
     context = {
-       'cart_products' : cart_products
+    #    "setting" : setting,
+       "total": total,
+       "Products" : Products,
+       "count" : count
     }
     return render(request, "base/header.html", context)
 
