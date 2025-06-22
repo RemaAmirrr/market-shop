@@ -45,8 +45,8 @@ INSTALLED_APPS = [
 
     # all app that we make
     'shop',
-    # 'auth',
     'cart',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -64,14 +64,14 @@ ROOT_URLCONF = 'over_shop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "templates")],
+        'DIRS': [os.path.join(BASE_DIR, "templates")], 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'cart.context_processors.cart',
+                'cart.context_processors.cart', # this line of code added for that when we need any class for all of project in all template
             ],
         },
     },

@@ -1,7 +1,14 @@
 {% load render_partial %}
-
-
 {% render_partial 'header' %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-success" role="alert">
+  {{ message }}
+  <!-- <button type="button" class="btn-close" data-bs-dismiss="alert" arla-label="Close"></button> -->
+</div>
+{% endfor %}
+{% endif %}  
 
 {% block content %}
 {% endblock %}

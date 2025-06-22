@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models import Q
 import datetime
 import os
 import random
@@ -15,32 +16,32 @@ def upload_image(instance, filename):
     final_name = f"{instance.id}-{instance.name}-{rand_name}{ext}"
     return f"products/{final_name}"
 
-# def gallery_upload_image(instance, filename):
-#     rand_name = random.randint(1, 999999999999)
-#     name, ext = get_file_extension(filename)
-#     final_name = f"{instance.id}-{instance.name}-{rand_name}{ext}"
-#     return f"gallery/{final_name}"
+def gallery_upload_image(instance, filename):
+    rand_name = random.randint(1, 999999999999)
+    name, ext = get_file_extension(filename)
+    final_name = f"{instance.id}-{instance.name}-{rand_name}{ext}"
+    return f"gallery/{final_name}"
 
-# class ProductManageObjects(models.Manager):
+class ProductManageObjects(models.Manager):
   
-#     def get_active_object(self):
-#         return self.get_queryset().filter(active=True)
+    def get_active_object(self):
+        return self.get_queryset().filter(active=True)
     
-#     def get_active_show_object(self):
-#         return self.get_queryset().filter(active=False, show=False)
+    def get_active_show_object(self):
+        return self.get_queryset().filter(active=False, show=False)
     
-#     def get_product_by_id(self, product_id):
-#         qs = self.get_queryset().filter(id=product_id, active=True)
-#         if qs.count() == 1:
-#             return qs.first()
-#         return None
+    def get_product_by_id(self, product_id):
+        qs = self.get_queryset().filter(id=product_id, active=True)
+        if qs.count() == 1:
+            return qs.first()
+        return None
 
-#     def search_product(self, query):
-#         lookup = Q (title__icontains=query) | Q(description__icontains=query) | Q (tag__title__icontains=query)
-#         return self.get_queryset().filter(lookup, active=True).distinct()
+    def search_product(self, query):
+        lookup = Q (name__icontains=query) | Q(description__icontains=query)
+        return self.get_queryset().filter(lookup, active=True).distinct()
     
-#     def get_product_by_category(self, category_name):
-#         return self.get_queryset().filter(category__name__iexact=category_name)
+    def get_product_by_category(self, category_name):
+        return self.get_queryset().filter(category__name__iexact=category_name)
 
 
 class Category(models.Model):
@@ -63,6 +64,16 @@ class Customer(models.Model):
     def __str__(self):
         return f'(self.first_name) (self.last_name)'
     
+Status = (
+
+("0%", 0),
+("10%", 10),
+("20%", 20),
+("30%", 30),
+("50%", 50),
+
+)    
+    
 class Products(models.Model):
     name = models.CharField(max_length=40, verbose_name="نام")
     description = models.CharField(max_length=50, blank=True, null=True, verbose_name="شرح")
@@ -71,11 +82,14 @@ class Products(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1, verbose_name="دستهبندی")
     picture = models.ImageField(upload_to=upload_image, verbose_name="تصویر")
     star = models.IntegerField(default=0, validators=[MaxValueValidator(5), MinValueValidator(0)])
+    discount = models.CharField(choices=Status, max_length=20, default="0%")
     especial = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
     newst = models.BooleanField(default=False)
     full_sale = models.BooleanField(default=False)
     offer = models.BooleanField(default=False)
+
+    objects = ProductManageObjects()
     
 
     class Meta:
@@ -84,6 +98,7 @@ class Products(models.Model):
 
     def __str__(self):
         return self.name 
+    
     
 class Order(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)

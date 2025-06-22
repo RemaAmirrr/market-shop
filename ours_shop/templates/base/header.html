@@ -97,7 +97,7 @@ crossorigin="anonymous"></script>
           {% if request.user.is_authenticated %}
             <ul>
               <li class="ml-5"><a href="{% url 'log_out' %}">خروج</a></li>
-              <li class="ml-5"><a href="">حساب کاربری</a></li>
+              <li class="ml-5"><a href="{% url 'profile_setting' %}">حساب کاربری</a></li>
             </ul>  
           {% else %} 
               <ul>
@@ -176,12 +176,25 @@ crossorigin="anonymous"></script>
           </div>
           <!-- Mini Cart End-->
           <!-- جستجو Start-->
+        {% comment %}
           <div class="col-table-cell col-lg-3 col-md-3 col-sm-6 col-xs-12 inner">
             <div id="search" class="input-group">
-              <input id="filter_name" type="text" name="search" value="" placeholder="جستجو" class="form-control input-lg" />
-              <button type="button" class="button-search"><i class="fa fa-search"></i></button>
+              <form action="{% url 'search' %}" method="post">
+                {% csrf_token %}
+                <input id="filter_name" type="text" name="searched" value="" placeholder="جستجو" class="form-control input-lg" />
+                <button type="submit" class="button-search"><i class="fa fa-search"></i></button>
+              </form>
             </div>
           </div>
+        {% endcomment %}  
+        <div class="col-table-cell col-lg-3 col-md-3 col-sm-6 col-xs-12 inner">
+          <div id="search" class="input-group">
+            <form action="{% url 'search' %}" >
+              <input id="filter_name" type="text" name="q" value="{{ request.GET.q }}" placeholder="جستجو" class="form-control input-lg" />
+              <button type="submit" class="button-search"><i class="fa fa-search"></i></button>
+            </form>
+          </div>
+        </div>
           <!-- جستجو End-->
         </div>
       </div>
@@ -326,23 +339,6 @@ crossorigin="anonymous"></script>
                     </ul>
                   </div>
                 </li>
-            <li class="menu_brands dropdown"><a href="#">برند ها</a>
-              <div class="dropdown-menu">
-                <div class="col-lg-1 col-md-2 col-sm-3 col-xs-6"><a href="#"><img src="{% static 'image/product/apple_logo-60x60.jpg'%}" title="اپل" alt="اپل" /></a><a href="#">اپل</a></div>
-                <div class="col-lg-1 col-md-2 col-sm-3 col-xs-6"><a href="#"><img src="{% static 'image/product/canon_logo-60x60.jpg'%}" title="کنون" alt="کنون" /></a><a href="#">کنون</a></div>
-                <div class="col-lg-1 col-md-2 col-sm-3 col-xs-6"> <a href="#"><img src="{% static 'image/product/hp_logo-60x60.jpg'%}" title="اچ پی" alt="اچ پی" /></a><a href="#">اچ پی</a></div>
-                <div class="col-lg-1 col-md-2 col-sm-3 col-xs-6"><a href="#"><img src="{% static 'image/product/htc_logo-60x60.jpg'%}" title="اچ تی سی" alt="اچ تی سی" /></a><a href="#">اچ تی سی</a></div>
-                <div class="col-lg-1 col-md-2 col-sm-3 col-xs-6"><a href="#"><img src="{% static 'image/product/palm_logo-60x60.jpg'%}" title="پالم" alt="پالم" /></a><a href="#">پالم</a></div>
-                <div class="col-lg-1 col-md-2 col-sm-3 col-xs-6"><a href="#"><img src="{% static 'image/product/sony_logo-60x60.jpg'%}" title="سونی" alt="سونی" /></a><a href="#">سونی</a> </div>
-                <div class="col-lg-1 col-md-2 col-sm-3 col-xs-6"><a href="#"><img src="{% static 'image/product/canon_logo-60x60.jpg'%}" title="test" alt="test" /></a><a href="#">تست</a> </div>
-                <div class="col-lg-1 col-md-2 col-sm-3 col-xs-6"><a href="#"><img src="{% static 'image/product/apple_logo-60x60.jpg'%}" title="test 3" alt="test 3" /></a><a href="#">تست 3</a></div>
-                <div class="col-lg-1 col-md-2 col-sm-3 col-xs-6"><a href="#"><img src="{% static 'image/product/canon_logo-60x60.jpg'%}" title="test 5" alt="test 5" /></a><a href="#">تست 5</a> </div>
-                <div class="col-lg-1 col-md-2 col-sm-3 col-xs-6"><a href="#"><img src="{% static 'image/product/canon_logo-60x60.jpg'%}" title="test 6" alt="test 6" /></a><a href="#">تست 6</a></div>
-                <div class="col-lg-1 col-md-2 col-sm-3 col-xs-6"><a href="#"><img src="{% static 'image/product/apple_logo-60x60.jpg'%}" title="test 7" alt="test 7" /></a><a href="#">تست 7</a> </div>
-                
-                
-              </div>
-            </li>
             <li class="dropdown wrap_custom_block hidden-sm hidden-xs"><a>بلاک سفارشی</a>
               <div class="dropdown-menu custom_block">
                 <ul>

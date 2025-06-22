@@ -1,0 +1,16 @@
+
+{% extends "base/base.html" %}
+{% load render_partial %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <aside id="column-left" class="col-sm-3 hidden-xs">
+            {% render_partial "authentication.views.profile_sidebar" %}
+        </aside>
+        <div id="content" class="col-sm-3">
+           <h3 class="title">پنل کاربری</h3>
+        </div>
+    </div>
+</div>
+{% endblock %}

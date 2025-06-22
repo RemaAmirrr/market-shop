@@ -1,3 +1,9 @@
 from django.contrib import admin
+from .models import ShippingPayment, Coupon
 
-# Register your models here.
+
+admin.site.register(ShippingPayment)
+admin.site.register(Coupon)
+
+
+
