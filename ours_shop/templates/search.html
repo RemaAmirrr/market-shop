@@ -171,9 +171,9 @@
           <br />
           <div class="row products-category">
             {% for item in page_obj %}
-            <div class="product-layout product-list col-xs-12">    
+            <div class="product-layout product-list col-xs-12" style="height: 350px; width: 250px; margin-right: 25px;">    
               <div class="product-thumb">
-                <div class="image"><a href="{% url 'product' item.id %}"><img src="{{item.picture.url}}" alt=" کتاب آموزش باغبانی " title=" کتاب آموزش باغبانی " class="img-responsive" /></a></div>
+                <div class="image"><a href="{% url 'product' item.id %}"><img src="{{item.picture.url}}"  style="width: 150px;" alt=" کتاب آموزش باغبانی " title=" کتاب آموزش باغبانی " class="img-responsive" /></a></div>
                 <div>
                   <div class="caption">
                     <h4><a href="product.html">{{item.name}}</a></h4>
@@ -184,13 +184,47 @@
                     <p class="price"> <span class="price-new">{{item.price}} تومان</span></p>
                     {% endif %}
                   </div>
-                  <div class="button-group">
-                    <button class="btn-primary" type="button" onClick=""><span>افزودن به سبد</span></button>
-                    <div class="add-to-links">
-                      <button type="button" data-toggle="tooltip" title="افزودن به علاقه مندی ها" onClick=""><i class="fa fa-heart"></i> <span>افزودن به علاقه مندی ها</span></button>
-                      <button type="button" data-toggle="tooltip" title="مقایسه این محصول" onClick=""><i class="fa fa-exchange"></i> <span>مقایسه این محصول</span></button>
-                    </div>
+                  <div class="rating">
+                    <div class="rating-container">
+                      {% with ''|center:5 as range %}
+                      {% for _ in range %}
+                          {% if item.avg_rating >= forloop.counter %}
+                              ★
+                          {% else %}
+                              ☆
+                          {% endif %}
+                      {% endfor %}
+                      {% endwith %}
                   </div>
+                 </div>
+                 <div class="button-group">
+                  <form method="post" action="{% url 'add_cart_home' item.id %}">
+                    {% csrf_token %}
+                    {% if item.full_sale %}
+                    <button type="submit" style="background-color: #4CAF50;
+                    color: white;
+                    padding: 10px 15px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;">افزود به سبد</button>
+                    </br>
+                    {% else %}
+                    <div  style="background-color: #db0b0b;
+                    color: white;
+                    padding: 10px ;
+                    cursor: pointer;">ناموجود</div>
+                    {% endif %}
+                  </form>
+                </br>
+                  <div class="add-to-links">
+                    <form method="post" action="{% url 'add_wishlist' item.id %}">
+                      {% csrf_token %}
+                      <button type="submit"  data-toggle="tooltip"
+                      title="افزودن به علاقه مندی" onClick=""><i class="fa fa-heart"></i></button>
+                    </form>
+                    <button type="button" data-toggle="tooltip" title="افزودن به مقایسه" onClick=""><i class="fa fa-exchange"></i></button>
+                  </div>
+                </div>
                 </div>
               </div>
             </div>

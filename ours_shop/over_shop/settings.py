@@ -41,7 +41,8 @@ INSTALLED_APPS = [
 
     # all app that installed
     'django.contrib.humanize',
-    'django_render_partial', 
+    'django_render_partial',
+    
 
     # all app that we make
     'shop',
@@ -72,13 +73,31 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'cart.context_processors.cart', # this line of code added for that when we need any class for all of project in all template
+                'cart.context_processors.my_flag_processor',
+                
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'over_shop.wsgi.application'
+DJANGO_EMAIL_APP_PASSWORD = "bjnxzbzvsojzambl"
+########################     EMAIL     ########################
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_USE_SSL = True
+# EMAIL_PORT = 465 # SSL
+# However, SSL is an older technology that contains some security flaws.
+# Transport Layer Security (TLS) is the upgraded version of SSL that fixes existing SSL vulnerabilities.
+# TLS authenticates more efficiently and continues to support encrypted communication channels.
+# خلاصه این که اس اس ال یه مشکلاتی داشت و ورژن تی ال اس رو دادن که امن تره
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587 # TLS
+EMAIL_HOST_USER = "remaamir90112030@gmail.com"
+EMAIL_HOST_PASSWORD = DJANGO_EMAIL_APP_PASSWORD
+########################     END EMAIL     ########################
 
+WSGI_APPLICATION = 'over_shop.wsgi.application'
+MY_FLAG_DEFAULT = False
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -115,7 +134,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'fa-ir'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 

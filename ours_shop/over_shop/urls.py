@@ -29,8 +29,7 @@ urlpatterns = [
     path('footer', footer, name="footer"),
     path('about_us', about_us, name="about_us"),
     path('contact_us', contact_us, name="contact_us"),
-    
-]
+    ]
 # command for run and make all file like static and media is "py manage.py collectstatic" but 
 # you should make any folder with assets name in project
 if settings.DEBUG:

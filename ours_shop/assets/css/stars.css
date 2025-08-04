@@ -1,0 +1,21 @@
+
+.rating {
+  font-size: 24px;
+  color: gold;
+}
+
+.rating span {
+  font-size: 16px;
+  color: black;
+  vertical-align: super;
+}
+
+/* Optional: Style radio buttons as stars */
+form .rating-radio {
+  display: none; /* Hide default radio */
+}
+
+form .rating-label {
+  font-size: 24px;
+  cursor: pointer;
+}

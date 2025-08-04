@@ -1,76 +1,93 @@
 from shop.models import Products
+from .models import  OrderItem
+from decimal import Decimal
+from django.shortcuts import  get_object_or_404
+
+
+# myapp/cart.py
+from decimal import Decimal
 
 class Cart:
     def __init__(self, request):
         self.session = request.session
-        cart = self.session.get('session_key')
-        if 'session_key' not in request.session:
-            cart = self.session['session_key'] = {}
-        self.cart = cart 
+        # cart = self.session.get('cart', {})
+        cart = self.session.get('cart')
+        if 'cart' not in request.session:
+            cart = self.session['cart'] = {}
+        self.cart = cart
 
-    def add(self, product, quantity):
-        product_id = str(product.id)
-        product_qty = str(quantity)
+    def update(self, product_id, color, quantity):
+        key = f"{product_id}_{color}"
+        if key in self.cart:
+            self.cart[key]['quantity'] = quantity
+            self.save()
+            return True
+        return False
 
+    def remove(self, product_id, color):
+        key = f"{product_id}_{color}"
+        if key in self.cart:
+            del self.cart[key]
+            self.save()
+            return True
+        return False
 
-        if product_id in self.cart:
-            pass
-        else:
-            self.cart[product_id] = int(product_qty)
-        self.session.modified = True            
+    def save(self):
+        self.session['cart'] = self.cart
+        self.session.modified = True
+
+    def __iter__(self):
+        for key, item in self.cart.items():
+            item['price'] = Decimal(item['price'])
+            item['total_price'] = item['price'] * item['quantity']
+            yield item
+
+    def get_total_price(self):
+        return sum(
+            Decimal(item['price']) * item['quantity']
+            for item in self.cart.values()
+        )
 
     def __len__(self):
-        return len(self.cart) 
-    
-    def get_prods(self):
-        product_ids = self.cart.keys()
-        products = Products.objects.filter(id__in=product_ids)
-        return products
+        return sum(item['quantity'] for item in self.cart.values())
     
     def get_quants(self):
         quantites = self.cart
         return quantites
     
-    def update(self, product, quantity):
-        product_id = str(product)
-        product_qty = int(quantity)
-        ourcart = self.cart
-        ourcart[product_id] = product_qty
-        self.session.modified = True
-
-        alaki = self.cart
-        return alaki 
+    def item_cart(self):
+        items=self.cart.items()
+        return items
     
-    def delete(self, product):
-        product_id = str(product)
-        if product_id in self.cart:
-            del self.cart[product_id]
-        self.session.modified = True
-  
-    def get_total(self):
-        product_id = self.cart.keys()
-        products = Products.objects.filter(id__in=product_id)
-        total = 0
-        for key,value in self.cart.items():
-            key = int(key)
-            for product in products:
-                if product.id == key:
-                    if product.especial:
-                        total = total + (product.sale_price*value)
-                    else:
-                        total = total + (product.price*value)
-        return total  
+    def add(self, product_id, color, price, quantity=1):
+        key = f"{product_id}_{color}"
+        price = Decimal(price)
+        
+        if key in self.cart and self.cart[key]['color'] == color:
+            self.cart[key]['quantity'] += quantity
+        else:
+            self.cart[key] = {
+                'product_id': product_id,
+                'color': color,
+                'price': str(price),  # Store as string for serialization
+                'quantity': quantity,
+            }
+        self.save()  
 
-    def price_conunt(self):
-        product_id = self.cart.keys()
-        products = Products.objects.filter(id__in=product_id)
-        total=[]
+    def price_conunt(self, order):
+       
         for key,value in self.cart.items():
-            key = int(key)
-            for product in products:
-                if product.id == key:
-                    if product.active:
-                        total.append(product.price*value)
-                    else:
-                        total.append(product.price*value)
-        return total                   
+                product = get_object_or_404(Products, id=value['product_id'])
+                if product.especial:
+                    item_price = (product.sale_price)
+                else:
+                    item_price = (product.price)     
+                OrderItem.objects.create(
+                picture=product.picture,    
+                order=order,
+                product=product,
+                quantity=value['quantity'],
+                price_at_order=item_price,
+                all_price = (value['quantity'] * item_price),)
+
+                 

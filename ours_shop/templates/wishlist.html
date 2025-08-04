@@ -1,0 +1,68 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<body>
+    <div class="wrapper-wide">
+     
+      <div id="container">
+        <div class="container">
+          <!-- Breadcrumb Start-->
+          <ul class="breadcrumb">
+            <li><a href="index.html"><i class="fa fa-home"></i></a></li>
+            <li><a href="#">حساب کاربری</a></li>
+            <li><a href="wishlist.html">لیست علاقه مندی من</a></li>
+          </ul>
+          <!-- Breadcrumb End-->
+          <div class="row">
+            <!--Middle Part Start-->
+            <div id="content" class="col-sm-12">
+              <h1 class="title">لیست آرزوی من</h1>
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <td class="text-center">تصویر</td>
+                      <td class="text-left">نام محصول</td>
+                      <td class="text-left">مدل</td>
+                      <td class="text-right">قیمت واحد</td>
+                      <td class="text-right">عملیات</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in wishlist %}
+                    <tr>
+                      <td class="text-center"><a href="{% url 'product' item.product.id %}"><img src="{{item.product.picture.url}}"  style="width: 100px; height: 100px;" alt="تبلت ایسر" title="تبلت ایسر" /></a></td>
+                      <td class="text-left"><a href="product.html">{{item.product.name}} </a></td>
+                      <td class="text-left">محصول {{item.product.id}}</td>
+                      <td class="text-right"><div class="price"> {{item.product.price}} تومان </div></td>
+                      <td class="text-right">
+                        <span class="input-group-btn">
+                        <form method="post" action="{% url 'cart_add_wishlist' item.id %}">
+                          {% csrf_token %}
+                          {% if item.product.full_sale %}
+                            <button class="btn btn-primary" style="margin-left: 3px; border-radius: 10px;" data-toggle="tooltip" type="submit"
+                            data-original-title="افزودن به سبد"><i class="fa fa-shopping-cart"></i></butto>
+                          {% endif %}  
+                        </form>
+                        <form method="post" action="{% url 'delete_wishlist' item.id %}">
+                          {% csrf_token %}
+                          <button class="btn btn-danger" style="margin-left: 4px; border-radius: 9px;" title="" type="submit"
+                          data-toggle="tooltip" 
+                          data-original-title="حذف"><i class="fa fa-times"></i></button></td>
+                        </form>
+                        </span></td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!--Middle Part End -->
+          </div>
+        </div>
+      </div>
+    </body>
+ 
+{% endblock %}

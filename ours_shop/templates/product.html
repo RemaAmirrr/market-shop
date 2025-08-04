@@ -2,39 +2,44 @@
 {% load static %}
 {% load humanize %}
 {% load render_partial %}
+{% include rating.html %}
+
 
 {% block content %}
 <div id="container">
     <div class="container">
       <!-- Breadcrumb Start-->
       <ul class="breadcrumb">
-        <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="index.html" itemprop="url"><span itemprop="title"><i class="fa fa-home"></i></span></a></li>
-        <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="category.html" itemprop="url"><span itemprop="title">الکترونیکی</span></a></li>
-        <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="product.html" itemprop="url"><span itemprop="title">لپ تاپ ایلین ور</span></a></li>
+        <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="{% url 'get_products' %}" itemprop="url"><span itemprop="title"><i class="fa fa-home"></i></span></a></li>
+        <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="{% url 'category' product.category %}" itemprop="url"><span itemprop="title">{{product.category}}</span></a></li>
+        <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><a href="" itemprop="url"><span itemprop="title">{{product.name}}</span></a></li>
       </ul>
       <!-- Breadcrumb End-->
       <div class="row">
         <!--Middle Part Start-->
         <div id="content" class="col-sm-9">
           <div itemscope itemtype="http://schema.org/محصولات">
-            <h1 class="title" itemprop="name">لپ تاپ ایلین ور</h1>
+            <h1 class="title" itemprop="name">{{product.name}}</h1>
             <div class="row product-info">
               <div class="col-sm-6">
                 <div class="image"><img class="img-responsive" itemprop="image" id="zoom_01" src="{{product.picture.url}}" title="لپ تاپ ایلین ور" alt="لپ تاپ ایلین ور" data-zoom-image="image/product/macbook_air_1-600x900.jpg" /> </div>
                 <div class="center-block text-center"><span class="zoom-gallery"><i class="fa fa-search"></i> برای مشاهده گالری روی تصویر کلیک کنید</span></div>
-                <div class="image-additional" id="gallery_01"> <a class="thumbnail" href="#" data-zoom-image="image/product/macbook_air_1-600x900.jpg" data-image="image/product/macbook_air_1-350x525.jpg" title="لپ تاپ ایلین ور"> 
-                  <img src="image/product/macbook_air_1-66x99.jpg" title="لپ تاپ ایلین ور" alt = "لپ تاپ ایلین ور"/></a> 
-                  <a class="thumbnail" href="#" data-zoom-image="image/product/macbook_air_4-600x900.jpg" data-image="image/product/macbook_air_4-350x525.jpg" title="لپ تاپ ایلین ور"><img src="image/product/macbook_air_4-66x99.jpg" title="لپ تاپ ایلین ور" alt="لپ تاپ ایلین ور" /></a>
-                   <a class="thumbnail" href="#" data-zoom-image="image/product/macbook_air_2-600x900.jpg" data-image="image/product/macbook_air_2-350x525.jpg" title="لپ تاپ ایلین ور"><img src="image/product/macbook_air_2-66x99.jpg" title="لپ تاپ ایلین ور" alt="لپ تاپ ایلین ور" /></a> 
-                   <a class="thumbnail" href="#" data-zoom-image="image/product/macbook_air_3-600x900.jpg" data-image="image/product/macbook_air_3-350x525.jpg" title="لپ تاپ ایلین ور"><img src="image/product/macbook_air_3-66x99.jpg" title="لپ تاپ ایلین ور" alt="لپ تاپ ایلین ور" /></a> </div>
+                  <div class="image-additional" id="gallery_01"> <a class="thumbnail" href="#" data-zoom-image="image/product/macbook_air_1-600x900.jpg" data-image="image/product/macbook_air_1-350x525.jpg" title="لپ تاپ ایلین ور"> 
+                    {% for item in product.gallery %}
+                    <a class="thumbnail" href="#" data-zoom-image="image/product/macbook_air_3-600x900.jpg" 
+                     data-image="image/product/macbook_air_3-350x525.jpg" title="لپ تاپ ایلین ور"><img style="height: 100px; width: 100px;"
+                      src="{{item.image.url}}" title="لپ تاپ ایلین ور" alt="لپ تاپ ایلین ور" /></a>
+                    {% endfor %}  
+                  </div>
               </div>
               {% if product.active %}
                 <div class="col-sm-6">
                     <ul class="list-unstyled description">
-                    <li><b>برند :</b> <a href="#"><span itemprop="brand">اپل</span></a></li>
-                    <li><b>کد محصول :</b> <span itemprop="mpn">{{product.id}}</span></li>
-                    <li><b>امتیازات خرید:</b> 700</li>
-                    <li><b>وضعیت موجودی :</b> <span class="instock">موجود</span></li>
+                    {% if product.full_sale %}
+                      <li><b>وضعیت موجودی :</b> <span class="instock">موجود</span></li>
+                    {% else %}
+                       <li><b>وضعیت موجودی :</b> <span class="nostock">ناموجود</span></li>
+                    {% endif %}
                     </ul>
                     <ul class="price-box">
                     {% if product.especial %}
@@ -47,52 +52,75 @@
                     </li>
                     {% endif %}       
                     <li></li>
-                    <li>بدون مالیات : 9 میلیون تومان</li>
+                    
                     </ul>
+                    
                     <div id="product">
+                     
                     <h3 class="subtitle">انتخاب های در دسترس</h3>
-                    <div class="form-group required">
-                        <label class="control-label">رنگ</label>
-                        <select class="form-control" id="input-option200" name="option[200]">
-                        <option value=""> --- لطفا انتخاب کنید --- </option>
-                        <option value="4">مشکی </option>
-                        <option value="3">نقره ای </option>
-                        <option value="1">سبز </option>
-                        <option value="2">آبی </option>
-                        </select>
-                    </div>
-                    <div class="cart">
-                        <div>
-                        {% comment %}
-                        <div class="qty">
-                            <label class="control-label" for="input-quantity">تعداد</label>
-                            <input type="text" name="quantity" value="1" size="2" id="input-quantity" class="form-control" />
-                            <a class="qtyBtn plus" href="javascript:void(0);">+</a><br />
-                            <a class="qtyBtn mines" href="javascript:void(0);">-</a>
-                            <div class="clear"></div>
+                        <div class="form-group required">
+                            <label class="control-label">رنگ</label>
+                            <select class="form-control" id="color_product" name="option[200]">
+                             <option > ------ </option>
+                            {% for item in product.color %}
+                              <option  value="{{item.name}}"id="color_product">{{item.name}}</option>
+                            {% endfor %} 
+                            </select> 
                         </div>
-                        {% endcomment %}
-                        <select class="form-select" id="cart-qty">
-                            
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                        </select> 
-                        <button type="button" value="{{product.id}}" style="border-radius: 5px; margin-left: 15px; padding: 8px;" 
-                        id="cart_add" class="btn btn-primary btn-lg col-md-8">افزودن به سبد</button>
-                        </div>
-                        <div>
-                        <button type="button" class="wishlist" onClick=""><i class="fa fa-heart"></i> افزودن به علاقه مندی ها</button>
-                        <br />
-                        <button type="button" class="wishlist" onClick=""><i class="fa fa-exchange"></i> مقایسه این محصول</button>
-                        </div>
-                    </div>
+                      <div class="cart">
+                             {% comment %}
+                              <div class="qty">
+                                  <label class="control-label" for="input-quantity">تعداد</label>
+                                  <input type="text" name="quantity" value="1" size="2" id="input-quantity" class="form-control" />
+                                  <a class="qtyBtn plus" href="javascript:void(0);">+</a><br />
+                                  <a class="qtyBtn mines" href="javascript:void(0);">-</a>
+                                  <div class="clear"></div>
+                              </div>
+                              {% endcomment %}
+                              {% if product.full_sale %} 
+                                <button type="button" value="{{product.id}}" style="border-radius: 5px; padding: 8px;" 
+                                id="cart_add" class="btn btn-primary btn-lg col-md-12">افزودن به سبد</button>
+                              {% endif %}  
+                          <div>
+                            <br>
+                          <button type="button" value="{{product.id}}" id="wishlist_id" class="wishlist" onClick=""><i class="fa fa-heart"></i> افزودن به علاقه مندی ها</button>
+                          <button type="button" class="wishlist" onClick=""><i class="fa fa-exchange"></i> مقایسه این محصول</button>
+                          </div>
+                      </div>
+                      <div class="rating-container" style="margin-top: 30px;">
+                        <!-- Display Average Rating -->
+                          <div class="col-lg-6" style="margin-bottom: 10px;">
+                              <div class="rating" style="margin-left: 10px;">
+                                {% for i in "12345" %}
+                                    {% if average_rating >= forloop.counter %}
+                                        ★
+                                    {% else %}
+                                        ☆
+                                    {% endif %}
+                                {% endfor %}
+                              </div>
+                            <h1>({{ average_rating }})</h1>
+                          </div>
+                         <!-- Rating Form -->
+                         <div class="col-sm-6">
+                         {% if user.is_authenticated %} 
+                             <form method="post">
+                                 {% csrf_token %}
+                                 {{ form.stars }}
+                                 <button type="submit" class="btn-primary" style="margin: auto; padding: 10px; border-radius: 9px;">رای دادن</button>
+                             </form> 
+                           {% endif %}
+                         </div>
+                       </div>
                     </div>
                     <div class="rating" itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
                     <meta itemprop="ratingValue" content="0" />
-                    <p><span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span> <span class="fa fa-stack"><i class="fa fa-star-o fa-stack-1x"></i></span>
-                       <a onClick="$('a[href=\'#tab-review\']').trigger('click'); return false;" href=""><span itemprop="reviewCount">1 بررسی</span></a> / <a onClick="$('a[href=\'#tab-review\']').trigger('click'); return false;" href="">یک بررسی بنویسید</a></p>
+                    <!-- Display average rating -->
+                      <div class="rating">
+                    
+                      </div>
+                      <!-- Rating form -->
+                    
                     </div>
                     <hr>
                     <!-- AddThis Button BEGIN -->
@@ -114,8 +142,7 @@
                         {{product.sale_price | intcomma }} تومان<span itemprop="availability" content="ناموجود"></span></span></li>
                     {% else %} 
                     <li class="price" itemprop="offers" itemscope itemtype="http://schema.org/Offer"><span itemprop="price">
-                        {{product.price | intcomma }} تومان
-                        <span itemprop="availability" content="ناموجود"></span></span>
+                        {{product.price | intcomma }} تومان   
                     </li>
                     {% endif %}       
                     <li></li>
@@ -135,7 +162,7 @@
                     </div>
                     <div class="cart">
                         <div>
-                        <button type="button" class="wishlist" onClick=""><i class="fa fa-heart"></i> افزودن به علاقه مندی ها</button>
+                        <button type="button" id="wishlist" value="item.id" class="wishlist" onClick=""><i class="fa fa-heart"></i> افزودن به علاقه مندی ها</button>
                         <br />
                         <button type="button" class="wishlist" onClick=""><i class="fa fa-exchange"></i> مقایسه این محصول</button>
                         </div>
@@ -143,7 +170,12 @@
                     </div>
                     <div class="rating" itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
                     <meta itemprop="ratingValue" content="0" />
-                    <p><span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span> <span class="fa fa-stack"><i class="fa fa-star-o fa-stack-1x"></i></span> <a onClick="$('a[href=\'#tab-review\']').trigger('click'); return false;" href=""><span itemprop="reviewCount">1 بررسی</span></a> / <a onClick="$('a[href=\'#tab-review\']').trigger('click'); return false;" href="">یک بررسی بنویسید</a></p>
+                    <p><span class="fa fa-stack"><i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span> <span class="fa fa-stack">
+                      <i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span> <span class="fa fa-stack">
+                      <i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span> <span class="fa fa-stack">
+                      <i class="fa fa-star fa-stack-1x"></i><i class="fa fa-star-o fa-stack-1x"></i></span> <span class="fa fa-stack">
+                      <i class="fa fa-star-o fa-stack-1x"></i></span> <a onClick="$('a[href=\'#tab-review\']').trigger('click'); return false;" href="">
+                      <span itemprop="reviewCount">1 بررسی</span></a> / <a onClick="$('a[href=\'#tab-review\']').trigger('click'); return false;" href="">یک بررسی بنویسید</a></p>
                     </div>
                     <hr>
                     <!-- AddThis Button BEGIN -->
@@ -241,6 +273,7 @@
                     </div>
                   </div>
                   <div class="form-group required">
+                    
                     <div class="col-sm-12">
                       <label class="control-label">رتبه</label>
                       &nbsp;&nbsp;&nbsp; بد&nbsp;
@@ -265,98 +298,68 @@
             </div>
             <h3 class="subtitle">محصولات مرتبط</h3>
             <div class="owl-carousel related_pro">
+              {% for item in realyted_product %}
               <div class="product-thumb">
-                <div class="image"><a href="product.html"><img src="image/product/samsung_tab_1-220x330.jpg" alt="تبلت ایسر" title="تبلت ایسر" class="img-responsive" /></a></div>
+                <div class="image"><a href="{% url 'product' item.id %}"><img src="{{item.picture.url}}"  style="width: 100px; height: 100px;" alt="تبلت ایسر" title="تبلت ایسر" class="img-responsive" /></a></div>
                 <div class="caption">
-                  <h4><a href="product.html">تبلت ایسر</a></h4>
-                  <p class="price"> <span class="price-new">98000 تومان</span> <span class="price-old">240000 تومان</span> <span class="saving">-5%</span> </p>
-                  <div class="rating"> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span> </div>
+                  <h4><a href="{% url 'product' item.id %}">{{item.name}}</a></h4>
+                  <p class="price"> <span class="price-new">98000 تومان</span> <span class="price-old">240000 تومان</span> <span class="saving">{{item.discount}}</span> </p>
+                  <div class="rating"> 
+                      <div class="rating-container">
+                          {% with ''|center:5 as range %}
+                          {% for _ in range %}
+                              {% if item.avg_rating >= forloop.counter %}
+                                  ★
+                              {% else %}
+                                  ☆
+                              {% endif %}
+                          {% endfor %}
+                          {% endwith %}
+                          ({{ item.avg_rating|default:0|floatformat:1 }})
+                      </div>
+                   </div>
                 </div>
                 <div class="button-group">
-                  <button class="btn-primary" type="button" onClick=""><span>افزودن به سبد</span></button>
+                  <form method="post" action="{% url 'add_cart_product' item.id %}">
+                    {% csrf_token %}
+                    {% if item.full_sale %}
+                        <button type="submit" style="background-color: #4CAF50;
+                        color: white;
+                        padding: 5px 10px;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;">افزود به سبد</button>
+                    {% else %}
+                        <div style="background-color: #c10c0c;
+                        color: white;
+                        width: 100px;
+                        padding: 5px 10px;
+                        margin-right: 30px;
+                        height: 32px;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;">ناموجود </div>
+                    {% endif %}
+                  </form>
                   <div class="add-to-links">
-                    <button type="button" data-toggle="tooltip" title="افزودن به علاقه مندی" onClick=""><i class="fa fa-heart"></i></button>
+                    <form method="post" action="{% url 'add_wishlist' item.id %}">
+                      {% csrf_token %}
+                      <button type="submit"  data-toggle="tooltip"
+                      title="افزودن به علاقه مندی" onClick=""><i class="fa fa-heart"></i></button>
+                    </form>
                     <button type="button" data-toggle="tooltip" title="افزودن به مقایسه" onClick=""><i class="fa fa-exchange"></i></button>
                   </div>
-                </div>
+                </div> 
               </div>
-              <div class="product-thumb">
-                <div class="image"><a href="product.html"><img src="image/product/macbook_pro_1-220x330.jpg" alt=" کتاب آموزش باغبانی " title=" کتاب آموزش باغبانی " class="img-responsive" /></a></div>
-                <div class="caption">
-                  <h4><a href="product.html"> کتاب آموزش باغبانی </a></h4>
-                  <p class="price"> <span class="price-new">98000 تومان</span> <span class="price-old">120000 تومان</span> <span class="saving">-26%</span> </p>
-                </div>
-                <div class="button-group">
-                  <button class="btn-primary" type="button" onClick=""><span>افزودن به سبد</span></button>
-                  <div class="add-to-links">
-                    <button type="button" data-toggle="tooltip" title="افزودن به علاقه مندی" onClick=""><i class="fa fa-heart"></i></button>
-                    <button type="button" data-toggle="tooltip" title="افزودن به مقایسه" onClick=""><i class="fa fa-exchange"></i></button>
-                  </div>
-                </div>
-              </div>
-              <div class="product-thumb">
-                <div class="image"><a href="product.html"><img src="image/product/macbook_1-220x330.jpg" alt="آیدیا پد یوگا" title="آیدیا پد یوگا" class="img-responsive" /></a></div>
-                <div class="caption">
-                  <h4><a href="product.html">آیدیا پد یوگا</a></h4>
-                  <p class="price"> 900000 تومان </p>
-                  <div class="rating"> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span> </div>
-                </div>
-                <div class="button-group">
-                  <button class="btn-primary" type="button" onClick=""><span>افزودن به سبد</span></button>
-                  <div class="add-to-links">
-                    <button type="button" data-toggle="tooltip" title="افزودن به علاقه مندی" onClick=""><i class="fa fa-heart"></i></button>
-                    <button type="button" data-toggle="tooltip" title="افزودن به مقایسه" onClick=""><i class="fa fa-exchange"></i></button>
-                  </div>
-                </div>
-              </div>
-              <div class="product-thumb">
-                <div class="image"><a href="product.html"><img src="image/product/ipod_shuffle_1-220x330.jpg" alt="لپ تاپ hp پاویلیون" title="لپ تاپ hp پاویلیون" class="img-responsive" /></a></div>
-                <div class="caption">
-                  <h4><a href="product.html">لپ تاپ hp پاویلیون</a></h4>
-                  <p class="price"> 122000 تومان </p>
-                </div>
-                <div class="button-group">
-                  <button class="btn-primary" type="button" onClick=""><span>افزودن به سبد</span></button>
-                  <div class="add-to-links">
-                    <button type="button" data-toggle="tooltip" title="افزودن به علاقه مندی" onClick=""><i class="fa fa-heart"></i></button>
-                    <button type="button" data-toggle="tooltip" title="افزودن به مقایسه" onClick=""><i class="fa fa-exchange"></i></button>
-                  </div>
-                </div>
-              </div>
-              <div class="product-thumb">
-                <div class="image"><a href="product.html"><img src="image/product/ipod_touch_1-220x330.jpg" alt="سامسونگ گلکسی s7" title="سامسونگ گلکسی s7" class="img-responsive" /></a></div>
-                <div class="caption">
-                  <h4><a href="product.html">سامسونگ گلکسی s7</a></h4>
-                  <p class="price"> <span class="price-new">62000 تومان</span> <span class="price-old">122000 تومان</span> <span class="saving">-50%</span> </p>
-                </div>
-                <div class="button-group">
-                  <button class="btn-primary" type="button" onClick=""><span>افزودن به سبد</span></button>
-                  <div class="add-to-links">
-                    <button type="button" data-toggle="tooltip" title="افزودن به علاقه مندی" onClick=""><i class="fa fa-heart"></i></button>
-                    <button type="button" data-toggle="tooltip" title="افزودن به مقایسه" onClick=""><i class="fa fa-exchange"></i></button>
-                  </div>
-                </div>
-              </div>
-              <div class="product-thumb">
-                <div class="image"><a href="product.html"><img src="image/product/ipod_shuffle_1-220x330.jpg" alt="لپ تاپ hp پاویلیون" title="لپ تاپ hp پاویلیون" class="img-responsive" /></a></div>
-                <div class="caption">
-                  <h4><a href="product.html">لپ تاپ hp پاویلیون</a></h4>
-                  <p class="price"> 122000 تومان </p>
-                </div>
-                <div class="button-group">
-                  <button class="btn-primary" type="button", value="{{ product.id }}" id="add_cart" ><span>افزودن به سبد</span></button>
-                  <div class="add-to-links">
-                    <button type="button" data-toggle="tooltip" title="افزودن به علاقه مندی" onClick=""><i class="fa fa-heart"></i></button>
-                    <button type="button" data-toggle="tooltip" title="افزودن به مقایسه" onClick=""><i class="fa fa-exchange"></i></button>
-                  </div>
-                </div>
-              </div>
+              {% endfor %}
             </div>
+
           </div>
         </div>
         <!--Middle Part End -->
         <!--Right Part Start -->
         <aside id="column-right" class="col-sm-3 hidden-xs">
+        {% comment %}
           <h3 class="subtitle">پرفروش ها</h3>
         {% for item in full_sale %}
           <div class="side-item">
@@ -373,21 +376,22 @@
               </div>
             </div>
           </div>
-        {% endfor %}  
+        {% endfor %} 
+       
           <div class="list-group">
             <h3 class="subtitle">محتوای سفارشی</h3>
             <p>این یک بلاک محتواست. هر نوع محتوایی شامل html، نوشته یا تصویر را میتوانید در آن قرار دهید. </p>
             <p> در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد. </p>
             <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
           </div>
+          {% endcomment %} 
           <h3 class="subtitle">ویژه</h3>
-          
           <div class="side-item">
-            {% for item in especial_product %}
+            {% for item in especial_product|slice:":13" %}
               <div class="product-thumb clearfix">
                 <div class="image"><a href="{% url 'product' item.id %}"><img src="{{ item.picture.url }}" alt=" کتاب آموزش باغبانی " title=" کتاب آموزش باغبانی " class="img-responsive" /></a></div>
                 <div class="caption">
-                  <h4><a href="product.html">کتاب آموزش باغبانی</a></h4>
+                  <h4><a href="{% url 'product' item.id %}">{{item.name}}</a></h4>
                   <p class="price"> <span class="price-new">{{item.sale_price}}</span> <span class="price-old">{{item.price}}</span> <span class="saving">-26%</span> </p>
                 </div>
               </div>
@@ -401,25 +405,43 @@
   <script>
     $(document).on ('click', '#cart_add', function(e){
       e.preventDefault();
-
       $.ajax({
         type: 'POST',
         url: "{% url 'add_cart'%}",
         data: {
           product_id: $('#cart_add').val(),
-          product_qty: $('#cart-qty option:selected').text(),
+          // product_qty: $('#cart-qty option:selected').text(),
+          product_qty : 1,
+          color_product : $('#color_product option:selected').text(),
           csrfmiddlewaretoken: '{{ csrf_token }}',
           action: 'post'
         },
         success: function(json){
           //console.log(json)
-          location.reload();
-          
+          location.reload();  
+        },
+        error: function(xhr, errmsg, err){
+        }
+      })
+    })
+    
+    $(document).on ('click', '#wishlist_id', function(e){
+      e.preventDefault();
+      $.ajax({
+        type: 'POST',
+        url: "{% url 'add_wishlist_product'%}",
+        data: {
+          product_id: $('#wishlist_id').val(),
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          action: 'post'
+        },
+        success: function(json){
+          //console.log(json)
+          location.reload();  
         },
         error: function(xhr, errmsg, err){
         }
       })
     })
   </script>
-
 {% endblock %}

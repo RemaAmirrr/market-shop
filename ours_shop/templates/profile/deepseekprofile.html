@@ -1,0 +1,1058 @@
+<!-- <!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پروفایل فروشگاه - تکمیل اطلاعات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 100, 0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 25px 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-weight: 300;
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            margin-top: 30px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            width: 65%;
+            background: #4CAF50;
+            border-radius: 4px;
+        }
+        
+        .content {
+            display: flex;
+            padding: 0;
+            flex-wrap: wrap;
+        }
+        
+        .profile-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 40px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-left: 1px solid #eee;
+        }
+        
+        .form-section {
+            flex: 2;
+            min-width: 500px;
+            padding: 40px;
+        }
+        
+        .profile-pic-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .profile-pic {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(45deg, #6a93cb, #a4bfef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4rem;
+        }
+        
+        .upload-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: #4b6cb7;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            transform: scale(1.1);
+            background: #3a5ba0;
+        }
+        
+        .stats {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            margin: 25px 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #4b6cb7;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #eef2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4b6cb7;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background: #4b6cb7;
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #182848;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4b6cb7;
+            display: inline-block;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .form-col {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #444;
+        }
+        
+        .input-icon {
+            position: relative;
+        }
+        
+        .input-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4b6cb7;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4b6cb7;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #4b6cb7, #3a5ba0);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #4b6cb7;
+            color: #4b6cb7;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #3a5ba0, #2a4a80);
+        }
+        
+        .btn-outline:hover {
+            background: #f0f4f9;
+        }
+        
+        .footer {
+            background: #f8fafc;
+            padding: 20px 40px;
+            text-align: center;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 900px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .profile-section {
+                border-left: none;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .form-section {
+                min-width: 100%;
+            }
+        }
+        
+        /* Persian-specific styling */
+        .persian-text {
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>تکمیل پروفایل فروشگاه</h1>
+            <p>برای ایجاد یک تجربه بهتر برای مشتریان، لطفا اطلاعات پروفایل خود را با دقت تکمیل کنید</p>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="profile-section">
+                <div class="profile-pic-container">
+                    <div class="profile-pic">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div class="upload-btn">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                
+                <h2>فروشگاه الکترونیک پارس</h2>
+                <p class="persian-text">فروشگاه تخصصی لوازم الکترونیکی و دیجیتال</p>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value">۱۲۴</div>
+                        <div class="stat-label">محصولات</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">۴.۸</div>
+                        <div class="stat-label">امتیاز</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">۹۸%</div>
+                        <div class="stat-label">رضایت</div>
+                    </div>
+                </div>
+                
+                <div class="social-links">
+                    <div class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                    <div class="social-icon">
+                        <i class="fab fa-telegram"></i>
+                    </div>
+                    <div class="social-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="social-icon">
+                        <i class="fab fa-linkedin"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">اطلاعات فروشگاه</h2>
+                
+                <form>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="fullname">نام کامل</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="fullname" placeholder="نام و نام خانوادگی" value="رضا محمدی">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="shopname">نام فروشگاه</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-store"></i>
+                                    <input type="text" id="shopname" placeholder="نام فروشگاه" value="فروشگاه الکترونیک پارس">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="email">ایمیل</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="email" placeholder="آدرس ایمیل" value="info@parselectronic.com">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="phone">تلفن</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-phone"></i>
+                                    <input type="tel" id="phone" placeholder="شماره تماس" value="۰۹۱۲۱۲۳۴۵۶۷">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address">آدرس فروشگاه</label>
+                        <div class="input-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input type="text" id="address" placeholder="آدرس کامل فروشگاه" value="تهران، خیابان آزادی، پلاک ۱۲۳">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="category">دسته‌بندی فروشگاه</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-tag"></i>
+                                    <select id="category">
+                                        <option>لوازم الکترونیکی</option>
+                                        <option selected>کالای دیجیتال</option>
+                                        <option>پوشاک</option>
+                                        <option>لوازم خانه</option>
+                                        <option>خوراکی‌ها</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="website">وبسایت (اختیاری)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-globe"></i>
+                                    <input type="url" id="website" placeholder="آدرس وبسایت">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bio">درباره فروشگاه</label>
+                        <textarea id="bio" placeholder="توضیحات درباره فروشگاه و فعالیت‌های شما...">فروشگاه تخصصی لوازم الکترونیکی و دیجیتال با بیش از ۱۰ سال سابقه در زمینه واردات و توزیع محصولات با کیفیت. ارائه بهترین برندهای جهانی با گارانتی معتبر و قیمت مناسب.</textarea>
+                    </div>
+                    
+                    <div class="btn-container">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> ذخیره اطلاعات
+                        </button>
+                        <button type="button" class="btn btn-outline">
+                            <i class="fas fa-eye"></i> پیش نمایش پروفایل
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>کلیه حقوق این وبسایت متعلق به فروشگاه الکترونیک پارس می‌باشد © ۱۴۰۲</p>
+        </div>
+    </div>
+
+    <script>
+        // Simple JavaScript for camera button
+        document.querySelector('.upload-btn').addEventListener('click', function() {
+            alert('آپلود عکس پروفایل: در این بخش می‌توانید عکس جدیدی برای پروفایل خود انتخاب کنید.');
+        });
+        
+        // Form submission simulation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('اطلاعات پروفایل با موفقیت ذخیره شد!');
+        });
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پروفایل مشتری - فروشگاه آنلاین</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Vazirmatn, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(0, 0, 100, 0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-weight: 300;
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .content {
+            display: flex;
+            padding: 0;
+            flex-wrap: wrap;
+        }
+        
+        .profile-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 40px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-left: 1px solid #eee;
+        }
+        
+        .form-section {
+            flex: 2;
+            min-width: 500px;
+            padding: 40px;
+        }
+        
+        .profile-pic-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .profile-pic {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(45deg, #6a93cb, #a4bfef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4rem;
+        }
+        
+        .upload-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: #4b6cb7;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            transform: scale(1.1);
+            background: #3a5ba0;
+        }
+        
+        .user-info {
+            width: 100%;
+            margin-top: 20px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .info-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #eef2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4b6cb7;
+            font-size: 1.2rem;
+            margin-left: 15px;
+        }
+        
+        .info-content {
+            flex: 1;
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        
+        .info-value {
+            font-weight: 800;
+            font-size: .8rem;
+            color: #333;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: #182848;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4b6cb7;
+            display: inline-block;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .form-col {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #444;
+        }
+        
+        .input-icon {
+            position: relative;
+        }
+        
+        .input-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4b6cb7;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4b6cb7;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 16px 35px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #4b6cb7, #3a5ba0);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #4b6cb7;
+            color: #4b6cb7;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #3a5ba0, #2a4a80);
+        }
+        
+        .btn-outline:hover {
+            background: #f0f4f9;
+        }
+        
+        .footer {
+            background: #f8fafc;
+            padding: 20px 40px;
+            text-align: center;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .notification {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        @media (max-width: 900px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .profile-section {
+                border-left: none;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .form-section {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>تکمیل پروفایل مشتری</h1>
+            <p>لطفاً اطلاعات خود را برای تجربه بهتر در فروشگاه ما تکمیل کنید</p>
+        </div>
+        <form class="form-horizontal" method="post" enctype="multipart/form-data" action="{% url 'profile_setting' %}">
+        
+        <div class="content">
+            
+                <div class="profile-section">
+
+                    <div class="profile-pic-container">
+
+                        <div class="profile-pic" >
+                            {% if profile.image %}
+                               <img style="width: 200px; height: 200px; border-radius: 10px; border: 0ch;", src="{{ profile.image.url }}"/>
+                            {% endif %}
+                        </div>
+                        <!-- <div class="upload-btn">
+                            <i class="fas fa-camera"></i>
+                        </div> -->
+                        {{ form_data.image }}
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">نام کامل</div>
+                                <div class="info-value">{{profile.full_name}}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">ایمیل</div>
+                                <div class="info-value">{{profile.email}}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">تلفن</div>
+                                <div class="info-value">{{profile.phone}}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">آدرس</div>
+                                <div class="info-value">{{profile.address}}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="user-info">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fa-solid fa-shopping-cart"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-value"><a href="{% url 'order_history' %}">سفارشات</a></div>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                            </div>
+                            <div class="info-content">
+                                
+                                <div class="info-value"><a href="{% url 'password_change' %}">تغییر رمز عبور</a></div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                            </div>
+                            <div class="info-content">
+                                
+                                <div class="info-value"><a href="{% url 'log_out'%}">خروج</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            
+            <div class="form-section">
+                <div class="notification">
+                    <i class="fas fa-info-circle"></i>
+                    لطفاً اطلاعات خود را با دقت وارد کنید. این اطلاعات برای ارسال سفارشات شما استفاده خواهد شد.
+                </div>
+                
+                <h2 class="section-title">ویرایش پروفایل</h2>
+                
+             
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="fullname">نام کامل</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-user"></i>
+                                    {% csrf_token %}
+                                   {{form_data.full_name}}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="phone">شماره تلفن</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-phone"></i>
+                                   {{form_data.phone}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">آدرس ایمیل</label>
+                        <div class="input-icon">
+                            <i class="fas fa-envelope"></i>
+                            {{form_data.email}}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address">آدرس کامل</label>
+                        <div class="input-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {{form_data.address}}
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="province">استان</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-city"></i>
+                                    {{form_data.state}}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="city">شهر</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-building"></i>
+                                  {{form_data.city}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="postalcode">کد پستی</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-mail-bulk"></i>
+                                   {{form_data.zipcode}}
+                            </div>
+                        </div>
+                        
+                        <!-- <div class="form-col">
+                            <div class="form-group">
+                                <label for="birthdate">تاریخ تولد (اختیاری)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-birthday-cake"></i>
+                                    <input type="text" id="birthdate" placeholder="۱۳۷۵/۰۵/۱۵">
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+                    
+                    <div class="btn-container">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> ذخیره اطلاعات
+                        </button>
+                        <button type="button" class="btn btn-outline">
+                            <i class="fas fa-sync-alt"></i> بازنشانی فرم
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© ۱۴۰۳ - تمامی حقوق برای فروشگاه آنلاین ما محفوظ است</p>
+        </div>
+    </div>
+    {% comment %}
+    <script>
+        // Simple JavaScript for profile picture upload
+        document.querySelector('.upload-btn').addEventListener('click', function() {
+            alert('آپلود عکس پروفایل: در این بخش می‌توانید عکس جدیدی برای پروفایل خود انتخاب کنید.');
+        });
+        
+        // Form submission simulation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show success message
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                اطلاعات پروفایل شما با موفقیت ذخیره شد!
+            `;
+            
+            document.querySelector('.form-section').insertBefore(notification, document.querySelector('.section-title'));
+            
+            // Scroll to top
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            
+            // Remove notification after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        });
+    </script>
+    {% endcomment %}
+</body>
+</html>

@@ -1,7 +1,6 @@
 {% extends "base/base.html" %}
-{% load static %}
 {% load humanize %}
-{% load render_partial %}
+
 
 {% block content %}
     <div id="container">
@@ -17,106 +16,112 @@
             <div id="content" class="col-sm-12">
             <h1 class="title">سبد خرید</h1>
                 <div class="table-responsive">
-             {% for item in cart_products %}
-                <table class="table table-bordered">
+             {% for item in cart_items %}
+                <table class="table table-bordered"  id="cartTable">
                     <thead>
                     <tr>
                         <td class="text-center">تصویر</td>
                         <td class="text-left">نام محصول</td>
-                        <td class="text-left">مدل</td>
+                        <td class="text-left">تعداد</td>
+                        <td class="text-left">سایز</td>
+                        <td class="text-left">رنگ</td>
                         <td class="text-right">قیمت واحد</td>
                         <td class="text-right">کل</td>
                     </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="text-center"><a href="{% url 'product' item.id %}" ><img src="{{ item.picture.url}}"
-                               style="width: 100px; height: 100px;" alt="{{ item.name }}" title="تبلت ایسر" class="img-thumbnail"></a></td>
+                        <tr data-product-id="{{ item.product.id }}">
+                            <td class="text-center"><a href="{% url 'product' item.product.id %}" ><img src="{{ item.product.picture.url}}"
+                               style="width: 100px; height: 100px;" alt="{{ item.product.name }}" title="تبلت ایسر" class="img-thumbnail"></a></td>
                             <td class="text-left col-sm-1">
-                            <small>{{ item.name }}</small></td>
+                            <small>{{ item.product.name }}</small></td>
                             <td class="text-left">
                               <div class="input-group btn-block quantity">
-                                <select class="form-select col-md-3" id="select{{item.id}}">
-                                  {% for key,value in quantities.items %}
-                                      {% if key == item.id|slugify %}
-                                       <option selected> {{ value }} </option> 
-                                      {% endif %}
-                                  {% endfor %}            
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                            </select> 
-                                <span class="input-group-btn">
-                                 <button type="button" data-index={{item.id}} class="btn btn-primary update-cart">ویرایش</button>
-                                 <button type="button" data-index={{item.id}} class="btn btn-danger delete-product">حذف</button>
-                                </span></div></td>
-                            {% if item.especial %}    
-                                 <td class="text-right">{{ item.sale_price }}</td>
+                                  <form method="post" action="{% url 'cart_update' item.product.id item.color %}">
+                                    {% csrf_token %}
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+                                    <button style="margin-left: 5px;" type="submit" data-index={{item.product.id}} 
+                                    class="btn btn-primary">ویرایش</button>
+                                  </form>
+                                  <form method="post" action="{% url 'cart_delete' item.product.id item.color %}">
+                                    {% csrf_token %}
+                                    <button type="submit" data-index={{item.product.id}} class="btn btn-danger delete-product">حذف</button>
+                                  </form> 
+                                </div></td> 
+                            <td class="text-left"></td>    
+                            <td class="text-left" id="product_color">{{item.color}}</td>    
+                            {% if item.product.especial %}    
+                                 <td class="text-right">{{ item.product.sale_price }}</td>
                             {% else %}
-                                <td class="text-right">{{ item.price }}</td>
+                                <td class="text-right">{{ item.product.price }}</td>
                             {% endif %}    
                             <td class="text-right">
-                         
+                              {{ item.total_price }}
                             </td>
                         </tr>
                     </tbody>
                 </table>
              {% endfor %}   
                 </div>
+            {% if cart_qty > 0 %}    
             <h2 class="subtitle">حالا مایلید چه کاری انجام دهید؟</h2>
-            <p>در صورتی که کد تخفیف در اختیار دارید میتوانید از آن در اینجا استفاده کنید.</p>
-            <div class="row">
-                <div class="col-sm-6">
+            <div class="row">  
+              <div class="col-sm-6">
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                    <h4 class="panel-title">استفاده از کوپن تخفیف</h4>
-                    </div>
-                    <div id="collapse-coupon" class="panel-collapse collapse in">
+                  <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-ticket"></i> استفاده از کوپن تخفیف</h4>
+                  </div>
                     <div class="panel-body">
-                        <form  method="post"  action="{% url 'use_coupon' %}">
-                            <div class="row" >
-                                <label class="col-sm-4 control-label" for="input-coupon">کد تخفیف خود را در اینجا وارد کنید</label>
-                                <div class="col-md-5">
-                                    {% csrf_token %}
-                                    {{coupon_form}}
-                                </div>
-                                    <input type="submit" style="margin-top: 27px; border-radius: 5px;" value="اعمال کوپن" id="button-coupon"  class="btn btn-primary">
-                                </div>
-                            </div> 
-                       </form>
+                      <label for="input-coupon" class="col-sm-6 control-label">کد تخفیف خود را وارد کنید</label>
+                      <form  method="post"  action="{% url 'cart_summery' %}">
+                          <div class="input-group">
+                          <div class="row">
+                              <div class="col-md-7" style="padding-right: 20px;">
+                                  {% csrf_token %}
+                                  {{coupon_form}}
+                              </div>
+                              <div class="col-md-3" style="margin-top: 25px; margin-left: 20px;">
+                                  <input type="submit" class="btn btn-primary" data-loading-text="بارگذاری ..." id="button-coupon" value="اعمال کوپن">
+                              </div> 
+                          </div> 
+                          </div>
+                        </span></div>
+                      </form>
                     </div>
-                    </div>
-                </div>
-                </div>
-            </div>
-            <div class="row">
+                </div> 
+               {% endif %} 
                 <div class="col-sm-4 col-sm-offset-8">
                 <table class="table table-bordered">
                     <tr>
                     <td class="text-right"><strong>جمع کل:</strong></td>
-                    <td class="text-right">{{ total }} تومان</td>
+                    <td class="text-right" >{{ all_total_price|floatformat:2 }} تومان</td>
                     </tr>
                     <tr>
-                    <td class="text-right"><strong>مالیات:</strong></td>
-                    <td class="text-right">11880 تومان</td>
-                    </tr>
+                        <td class="text-right"><strong>کسر کوپن :</strong></td>
+                        <td class="text-right">{{ off_price|floatformat:2 }} تومان</td>
                     <tr>
-                    <td class="text-right"><strong>کل :</strong></td>
-                    <td class="text-right">{{ total }} تومان</td>
+                    <td class="text-right"><strong>مقدار نهایی :</strong></td>
+                    <td class="text-right">{{ realy_price|floatformat:2 }} تومان</td>
                     </tr>
                 </table>
                 </div>
             </div>
             <div class="buttons">
                 <div class="pull-left"><a href="{% url 'get_products' %}" class="btn btn-default">ادامه خرید</a></div>
-                <div class="pull-right"><a href="checkout.html" class="btn btn-primary">تسویه حساب</a></div>
+                {% if cart_qty > 0 %}
+                  {% if request.user.is_authenticated %}
+                   <div class="pull-right"><a href="{% url 'check_out' realy_price %}" class="btn btn-primary">تکمیل خرید </a></div>
+                  {% else %}
+                  <div class="pull-right"><a href="{% url 'log_in' %}" class="btn btn-primary">تکمیل خرید</a></div>
+                  {% endif %}
+                {% endif %}
             </div>
             </div>
             <!--Middle Part End -->
         </div>
         </div>
     </div>
+    {% comment %}
     <script>
         $(document).on('click', '.update-cart', function(e){
          e.preventDefault();
@@ -127,7 +132,8 @@
            url: '{% url "cart_update" %}',
            data: {
              product_id:  $(this).data('index'),
-             product_qty: $('#select' + productid + ' option:selected').text(),
+             product_qty:  $('#qty_input').val(),
+             product_color: $('#product_color').val(),
              csrfmiddlewaretoken: '{{ csrf_token }}',
              action: 'post'
            },
@@ -140,15 +146,16 @@
            }
          })
         })
-    
+
         $(document).on('click', '.delete-product', function(e){
          e.preventDefault();
-    
+         var product_color = $('#product_color').text();
          $.ajax({
            type: 'POST',
            url: '{% url "cart_delete" %}',
            data: {
-             product_id:  $(this).data('index'),
+             product_id: $(this).data('index'),
+             product_color: product_color,
              csrfmiddlewaretoken: '{{ csrf_token }}',
              action: 'post'
            },
@@ -161,5 +168,60 @@
            }
          })
         })
-     </script> 
+     </script>
+    <script>
+      $(document).ready(function() {
+    
+        // Color selection dropdown
+        $('.color-select').click(function(e) {
+          e.stopPropagation();
+          $(this).find('.color-options').toggle();
+        });
+      
+        $('.color-options div').click(function() {
+          const color = $(this).data('color');
+          $(this).closest('.color-select')
+            .find('.selected-color').text(color)
+            .attr('data-selected-color', color);
+          $(this).parent().hide();
+        });
+      
+        // Update cart item
+        $('.update-btn').click(function() {
+          const row = $(this).closest('tr');
+          const productId = row.data('product-id');
+          const color = row.find('.selected-color').data('selected-color');
+          const quantity = row.find('.item-qty').val();
+      
+          $.post('{% url "cart_update" %}', {
+            product_id: productId,
+            color: color,
+            quantity: quantity,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+          }, function(response) {
+            if (response.success) {
+              location.reload(); // Refresh to show updated prices
+            }
+          });
+        });
+      
+        // Delete cart item
+        $('.delete-btn').click(function() {
+          const row = $(this).closest('tr');
+          const productId = row.data('product-id');
+      
+          if (confirm('Remove item from cart?')) {
+            $.post('{% url "cart_delete" %}', {
+              product_id: productId,
+              csrfmiddlewaretoken: '{{ csrf_token }}'
+            }, function(response) {
+              if (response.success) {
+                row.fadeOut(300, () => row.remove());
+              }
+            });
+          }
+        });
+      });
+      </script>
+      {% endcomment %}
 {% endblock %}

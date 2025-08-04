@@ -1,61 +1,65 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Products, Category
+from shop.models import Products, Category, WishList, Gallery, Bander, Rating, Color, Size
 from django.views.generic.list import ListView
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
-from django.http import Http404
-
+from django.http import Http404, JsonResponse
+from django import template
+from django.views.generic.edit import FormView
+from django.views.generic.detail import DetailView
+from django.contrib.contenttypes.models import ContentType
+from .forms import RatingForm
+from django.db.models import Avg
 
 
 def get_products(request):
+    products = Products.objects.filter(especial=True, active=True).annotate(avg_rating=Avg('ratings__stars'))
+    products_cloths = Products.objects.filter(category__name="لباس", active=True).annotate(avg_rating=Avg('ratings__stars'))
+    products_mode = Products.objects.filter(category__name="ارایشی بهداشتی", active=True).annotate(avg_rating=Avg('ratings__stars'))
+    baner = Bander.objects.all()
     
-    products = Products.objects.filter(especial=True, active=True).all
-    products_cloths = Products.objects.filter(category__name="cloths", active=True)
-    products_mode = Products.objects.filter(category__name="makeup", active=True)
-    products_baner = Products.objects.filter(name="بنر" ).all()
-    beg_baner = Products.objects.filter(name="بنر بزرگ").all()
     context={
         "product_mode": products_mode,
         "products_cloths":products_cloths,
         "products":products,
-        "products_baner" : products_baner,
-        "beg_baner" : beg_baner
+        "baner" : baner
     }
     return render(request, "home.html", context)
 
 def product(request, pk):
-
+    user_rating = None
     full_sale = Products.objects.filter(full_sale=True, active=True)
-    product = Products.objects.get(id=pk, active=True)
+    product = get_object_or_404(Products, id=pk, active=True)
+    realyted_product = Products.objects.filter(category=product.category).annotate(avg_rating=Avg('ratings__stars'))
     especial_product = Products.objects.filter(especial=True, active=True)
-    
-    context = {
-        "product": product,
+    # Calculate average rating
+    average_rating = product.ratings.aggregate(Avg('stars'))['stars__avg'] or 0
+    if request.method == 'POST':
+        form = RatingForm(request.POST)
+        if form.is_valid() and request.user.is_authenticated:
+            rating, created = Rating.objects.update_or_create(
+                product=product,
+                user=request.user,
+                defaults={'stars': form.cleaned_data['stars']}
+            )
+            return redirect('product', pk=product.id)
+    else:
+        form = RatingForm()
+    return render(request, 'product.html', {
+        'product': product,
+        'form': form,
+        'average_rating': round(average_rating, 1) if average_rating else 0,
         "full_sale" : full_sale,
         "especial_product" : especial_product,
-    }
-    return render(request, "product.html", context)
-
-    
-# class Category(ListView):
-#     paginate_by = 4
-#     template_name = "category.html"
-
-#     def get_queryset(self):
-#         category_name = self.kwargs['cat']
-#         category = Category.objects.filter(name__iexact=category_name)                                                        
-#         if category is None:
-#             raise Http404("محصول مورد نظر پیدا نشد")
-#         product = Products.objects.get_product_by_category(category_name) 
-#         return product 
+        "realyted_product" : realyted_product,
+        "user_rating" : user_rating,
+    })
 
 def category(request, cat):
-    cat = cat.replace("-", " ")
-
-    try:
-        category = Category.objects.get(name=cat)
-        products = Products.objects.filter(category=category).all()
+        cat = cat.replace("-", " ")
+        category = get_object_or_404(Category, name=cat)
+        products = Products.objects.filter(category=category, active=True).annotate(avg_rating=Avg('ratings__stars'))
         paginator = Paginator(products, 1)
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
@@ -71,34 +75,52 @@ def category(request, cat):
             "full_sale" : full_sale
         }
         return render(request, "category.html", context)
-    except:
-        return redirect ("get_products")
-    
     
 class Search(ListView): 
     template_name = "search.html"
     paginate_by = 12
-
     def get_queryset(self):
         query = self.request.GET.get("q")
-        
         if query is not None :
-            return Products.objects.search_product(query)
-        return Products.objects.filter(active=True)
+            return Products.objects.search_product(query).annotate(avg_rating=Avg('ratings__stars'))
+        return Products.objects.filter(active=True).annotate(avg_rating=Avg('ratings__stars'))
+    
+def add_wishlist(request, id):
+    if request.method == "POST":
+        product = Products.objects.get(id=id)
+        if request.user.is_authenticated:
+            WishList.objects.get_or_create(
+            user=request.user,
+            product=product
+            )
+        else:     
+            WishList.objects.get_or_create(
+                product=product
+                )
+        messages.success(request, ("این محصول به لیست ارزوها اضافه شد"))             
+    return redirect("get_products")
+    
+def add_wishlist_product(request):
+   if request.POST.get('action') == 'post':
+        product_id = int(request.POST.get('product_id'))
+        product = Products.objects.get(id=product_id)
+        if request.user.is_authenticated:
+            WishList.objects.get_or_create(
+            user=request.user,
+            product=product
+            )
+        else:     
+            WishList.objects.get_or_create(
+                product=product
+                )
+        messages.success(request, ("این محصول به لیست ارزوها اضافه شد"))
+        response = JsonResponse({})
+        return response           
 
-# def search(request): if you want for run search by funcation base you can use this code but for pagination i dont get any result 
-#     if request.method == 'POST':
-#         searched = request.POST['searched']
-#         if  searched:
-#             searched = Products.objects.filter(Q(name__icontains=searched) | Q(description__icontains=searched))
-#             paginator = Paginator(searched, 8)
-#             page_number = request.GET.get("page")
-#             page_obj = paginator.get_page(page_number)
-#             if searched:
-#                 return render(request, 'search.html', {'searched':searched, "page_obj":page_obj})  
-#             else:
-#                 messages.success(request, ("محصول مورد نظر پیدا نشد"))
-#                 return render(request, 'search.html', {})
-#         else: 
-#            messages.success(request, ("برای یافتن محصول نام ان را در کادر سرچ وارد کنید"))   
-#            return render(request, 'search.html', {})    
+def wishlist(request):
+      if request.user.is_authenticated:
+         wishlist = WishList.objects.filter(user=request.user).all()
+         return render(request, "wishlist.html", {"wishlist" : wishlist}) 
+      wishlist = WishList.objects.all()   
+      return render(request, "wishlist.html", {"wishlist" : wishlist})   
+

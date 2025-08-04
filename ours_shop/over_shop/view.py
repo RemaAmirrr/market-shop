@@ -1,25 +1,28 @@
 from cart.cart import Cart 
-from django.shortcuts import render
-
+from django.shortcuts import render, get_object_or_404
+from shop.models import Products
 
 def header(request):
-
-    # setting = Setting_site.objects.first()
     cart = Cart(request)
-    total = cart.get_total()
-    Products = cart.get_prods()
-    count = cart.get_quants()
-    context = {
-    #    "setting" : setting,
-       "total": total,
-       "Products" : Products,
-       "count" : count
-    }
-    return render(request, "base/header.html", context)
+    cart_items = []
+    for item in cart:
+        product = get_object_or_404(Products, id=item['product_id'])
+        cart_items.append({
+            **item,
+            'product': product,
+            'total_price': item['price'] * item['quantity'],  
+        })
+    
+    all_total_price = cart.get_total_price()
+    return render(request, 'base/header.html', {
+        'cart_items': cart_items,
+        'all_total_price': all_total_price
+    })
 
 def footer(request):
-    context = {
-       
+    product = Products.objects.filter(category__name="بنر").all()
+    context = { 
+        "product" : product 
     }
     return render(request, "base/footer.html", context)
 

@@ -1,0 +1,103 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load humanize %}
+{% load render_partial %}
+
+{% block content %}
+    <div id="container">
+        <div class="container">
+     
+        <div class="row">
+            <!--Middle Part Start-->
+            <div id="content" class="col-sm-12"> 
+                <form method="post" action="{% url 'show_all_order_item' %}">
+                    {% csrf_token %}
+                    <input type="number" 
+                           name="number_input" 
+                           placeholder="Enter a number">
+                    <button type="submit">Filter</button>
+                </form>
+            <h1 class="title"> {{massage}}</h1>
+
+            <div class="table-responsive">
+                <table class="table table-bordered"  id="cartTable">
+                    <thead>
+                    <tr>
+                        <td class="text-center">تصویر</td>
+                        <td class="text-left">نام محصول</td>
+                        <td class="text-left">تعداد</td>
+                        <td class="text-left">سایز</td>
+                        <td class="text-left">رنگ</td>
+                        <td class="text-right">قیمت واحد</td>
+                        <td class="text-right">کل</td>
+                    </tr>
+                    </thead>
+                    {% for item in order_item %}
+                    <tbody>
+                        <tr data-product-id="{{ item.product.id }}">
+                            <td class="text-center"><a href="{% url 'product' item.product.id %}" ><img src="{{ item.product.picture.url}}"
+                               style="width: 100px; height: 100px;" alt="{{ item.product.name }}" title="تبلت ایسر" class="img-thumbnail"></a></td>
+                            <td class="text-left col-sm-1">
+                            <small>{{ item.product.name }}</small></td>
+                            <td class="text-left">{{ item.quantity }}</td> 
+                            <td class="text-left"></td>    
+                            <td class="text-left" id="product_color">{{item.color}}</td>    
+                            {% if item.product.especial %}    
+                                 <td class="text-right">{{ item.product.sale_price }}</td>
+                            {% else %}
+                                <td class="text-right">{{ item.product.price }}</td>
+                            {% endif %}    
+                            <td class="text-right">
+                              {{ item.all_price }}
+                            </td>
+                        </tr>
+                    </tbody>
+                    {% endfor %} 
+                </table>
+              
+            </div>
+            <div class="row">  
+                <div class="col-sm-4 col-sm-offset-8">
+                <table class="table table-bordered">
+                    <tr>
+                    <td class="text-right"><strong>جمع کل:</strong></td>
+                    <td class="text-right" >{{ total_price|floatformat:2 }} تومان</td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"><strong>کسر کوپن :</strong></td>
+                        <td class="text-right">{{ off_price|floatformat:2 }} تومان</td>
+                    </tr>    
+                </table>
+                </div>
+            </div>
+            </div>
+            <!--Middle Part End -->
+        </div>
+        </div>
+    </div>
+    {% comment %}
+    <script>
+            $(document).on ('click', '#item_order', function(e){
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'add_item_show'%}",
+                data: {
+                item_id: $('#input-quantity').val(),
+                // // product_qty: $('#cart-qty option:selected').text(),
+                // product_qty : 1,
+                // color_product : $('#color_product option:selected').text(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+                },
+                success: function(json){
+                //console.log(json)
+               location.reload();  
+                },
+                error: function(xhr, errmsg, err){
+                }
+            })
+            })
+    </script>
+    {% endcomment %}
+{% endblock %}

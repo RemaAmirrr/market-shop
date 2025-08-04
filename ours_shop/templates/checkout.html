@@ -1,0 +1,206 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load humanize %}
+
+
+{% block content %}
+<div id="container">
+    <div class="container">
+      <!-- Breadcrumb Start-->
+      <ul class="breadcrumb">
+        <li><a href="index.html"><i class="fa fa-home"></i></a></li>
+        <li><a href="cart.html">سبد خرید</a></li>
+        <li><a href="checkout.html">تسویه حساب</a></li>
+      </ul>
+      <!-- Breadcrumb End-->
+      <div class="row">
+        <!--Middle Part Start-->
+        <div id="content" class="col-sm-12">
+          <h1 class="title">تسویه حساب</h1>
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="panel panel-default">
+               
+                <form method="post" action="{% url 'payed' %}">
+                  <div class="panel-body">
+                       {{order_form.status}}
+                  </div>
+                  {% for error in form_data.status.errors %}
+                    <div class="contuct_us_form"> {{ error }}</div>
+                  {% endfor %}
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title"><i class="fa fa-user"></i> اطلاعت شخصی و ادرس</h4>
+                </div>
+                  <div class="panel-body">
+                        {% csrf_token %}
+                        <fieldset id="account">
+                            <div class="form-group required">
+                             {{order_form.full_name}}
+                            </div>
+                             {% for error in order_form.full_name.errors %}
+                                 <div class="contuct_us_form"> {{ error }}</div>
+                             {% endfor %}
+
+                            <div class="form-group required">
+                             {{order_form.phone}}
+                            </div>
+                            {% for error in order_form.phone.errors %}
+                                 <div class="contuct_us_form"> {{ error }}</div>
+                             {% endfor %}
+
+                            <div class="form-group required">
+                              {{order_form.email}}
+                            </div>
+                            {% for error in order_form.email.errors %}
+                                 <div class="contuct_us_form"> {{ error }}</div>
+                             {% endfor %}
+
+                            <div class="form-group">
+                              {{order_form.zip_code}}
+                            </div>
+                            {% for error in order_form.zip_code.errors %}
+                                 <div class="contuct_us_form"> {{ error }}</div>
+                             {% endfor %}
+                             
+                            <div class="form-group">
+                              {{order_form.state}}
+                            </div>
+                            {% for error in order_form.state.errors %}
+                                 <div class="contuct_us_form"> {{ error }}</div>
+                             {% endfor %}
+
+                             <div class="form-group">
+                              {{order_form.city}}
+                            </div>
+                            {% for error in order_form.city.errors %}
+                                 <div class="contuct_us_form"> {{ error }}</div>
+                             {% endfor %}
+                             
+                             <div class="form-group required">
+                              {{order_form.address}}
+                            </div>
+                            {% for error in order_form.address.errors %}
+                                 <div class="contuct_us_form"> {{ error }}</div>
+                             {% endfor %}
+                           
+                        </fieldset>
+                  </div>
+              </div>
+            </div>
+            <div class="col-sm-8">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title"><i class="fa fa-truck"></i> شیوه ی تحویل</h4>
+                    </div>
+                      <div class="panel-body">
+                        <p>لطفا یک شیوه حمل و نقل انتخاب کنید.</p>
+                        {{order_form.pay_way}}
+                      </div>
+                      {% for error in order_form.pay_way.errors %}
+                                 <div class="contuct_us_form"> {{ error }}</div>
+                      {% endfor %}
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title"><i class="fa fa-credit-card"></i> شیوه پرداخت</h4>
+                    </div>
+                      <div class="panel-body">
+                        <p>لطفا یک شیوه پرداخت برای سفارش خود انتخاب کنید.</p>
+                        {{order_form.payed_way}}
+                      </div>
+                      {% for error in order_form.payed_way.errors %}
+                                 <div class="contuct_us_form"> {{ error }}</div>
+                      {% endfor %}
+                  </div>
+                </div>
+                </div>
+                <div class="col-sm-12">
+                </div>
+                <div class="col-sm-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title"><i class="fa fa-shopping-cart"></i> سبد خرید</h4>
+                    </div>
+                      <div class="panel-body">
+
+                        <div class="table-responsive">
+                          <table class="table table-bordered">
+                            <thead>
+                              <tr>
+                                <td class="text-center">تصویر</td>
+                                <td class="text-left">نام محصول</td>
+                                <td class="text-left">تعداد</td>
+                                <td class="text-right">قیمت واحد</td>
+                                <td class="text-right">کل</td>
+                              </tr>
+                            </thead>
+                                {% for item in orderitem %}
+                                <tbody>
+                                  <tr>
+                                    <td class="text-center"><a href="product.html"><img src="{{item.picture.url}}" style="width: 100px; height: 100px;" alt="کفش راحتی مردانه" title="کفش راحتی مردانه" class="img-thumbnail"></a></td>
+                                    <td class="text-left"><a href="product.html">{{item.product.name}}</a></td>
+                                    <td class="text-left">{{item.quantity}}</td>  
+                                    <td class="text-right">{{ item.price_at_order }}</td>
+                                    <td class="text-right">{{ item.all_price }}</td>  
+                                  </tr>
+                                </tbody>
+                                {% endfor %}   
+                            <tfoot>
+                              <tr>
+                                <td class="text-right" colspan="4"><strong>  مقدار نهای قبل از کسر هزینه ارسال :</strong></td>
+                                <td class="text-right">{{ realy_price|floatformat:2 }}  تومان</td>
+                                {{order_form.order_id}}
+                                <br>
+                                {% for error in order_form.order_id.errors %}
+                                   <div class="contuct_us_form"> {{ error }}</div>
+                                {% endfor %}
+                                {{order_form.user}}
+                                <br>
+                                {% for error in order_form.user.errors %}
+                                   <div class="contuct_us_form"> {{ error }}</div>
+                                {% endfor %}
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title"><i class="fa fa-pencil"></i> افزودن توضیح برای سفارش.</h4>
+                    </div>
+                      <div class="panel-body">
+                        
+                          {{order_form.description}}
+                          <br>
+                          {% for error in order_form.description.errors %}
+                                 <div class="contuct_us_form"> {{ error }}</div>
+                          {% endfor %}
+                          <label class="control-label" for="confirm_agree">
+                           
+                          <div class="buttons">
+                            <div class="pull-right">
+                              <button type="submit" class="btn btn-primary" id="button-confirm">تایید سفارش</button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--Middle Part End -->
+      </div>
+    </div>
+  </div>
+{% endblock %}  

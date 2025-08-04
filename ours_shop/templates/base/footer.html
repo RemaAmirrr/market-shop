@@ -7,12 +7,12 @@
     <div class="fpart-first">
       <div class="container">
         <div class="row">
-          <div class="contact col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <div class="contact col-lg-3 col-md-4 col-sm-12 col-xs-12">
             <h5>درباره مارکت شاپ</h5>
             <p>سایت مارکت شاپ اماده سرویس دادن به مشتریان عزیز میباشد ادرس ما استان ازبایجان غربی شهرستان سردشت خیابان امام فرشگاه مرکزی سایت مارکت شاپ</p>
             <img alt="" src="{% static 'image/logo-small.png'%}">
           </div>
-          <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
+          <div class="column col-lg-1 col-md-2 col-sm-3 col-xs-12">
             <h5>اطلاعات</h5>
             <ul>
               <li><a href="{% url 'about_us' %}">درباره ما</a></li>
@@ -21,7 +21,7 @@
               <li><a href="about-us.html">شرایط و قوانین</a></li>
             </ul>
           </div>
-          <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
+          <div class="column col-lg-1 col-md-2 col-sm-3 col-xs-12">
             <h5>خدمات مشتریان</h5>
             <ul>
               <li><a href="{% url 'contact_us' %}">تماس با ما</a></li>
@@ -29,7 +29,7 @@
               <li><a href="sitemap.html">نقشه سایت</a></li>
             </ul>
           </div>
-          <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
+          <div class="column col-lg-2 col-md-4 col-sm-3 col-xs-12">
             <h5>امکانات جانبی</h5>
             <ul>
               <li><a href="#">برند ها</a></li>
@@ -43,11 +43,19 @@
             <ul>
               <li><a href="#">حساب کاربری</a></li>
               <li><a href="#">تاریخچه سفارشات</a></li>
-              <li><a href="#">لیست علاقه مندی</a></li>
+              <li><a href="{% url  'wishlist' %}">لیست علاقه مندی</a></li>
               <li><a href="#">خبرنامه</a></li>
             </ul>
+         </div>
+         {% for item in product %}
+         
+          <div class="column col-lg-3 col-md-4 col-sm-2 col-xs-12">
+            <td class="text-center"><a href="" ><img src="{{item.picture.url}}"
+              style="width: 100px; height: 100px;" alt="{{ item.product.name }}" title="تبلت ایسر" class="img-thumbnail"></a></td>
           </div>
-        </div>
+      
+          {% endfor %}
+        </div>  
       </div>
     </div>
     <!--

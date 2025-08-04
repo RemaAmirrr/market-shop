@@ -20,7 +20,11 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet-rtl.css'%}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/responsive-rtl.css'%}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet-skin2.css'%}" />
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
+<link rel="stylesheet" type="text/css" href="{% static 'css/stars.css'%}" />
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css'%}" /> -->
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+ 
 crossorigin="anonymous"></script>
 
 <!-- CSS Part End-->
@@ -95,10 +99,15 @@ crossorigin="anonymous"></script>
           </div>
           <div id="top-links" class="nav pull-right flip">
           {% if request.user.is_authenticated %}
+        
             <ul>
               <li class="ml-5"><a href="{% url 'log_out' %}">خروج</a></li>
               <li class="ml-5"><a href="{% url 'profile_setting' %}">حساب کاربری</a></li>
-            </ul>  
+              {% if user.is_staff %}
+              <li class="ml-5"><a href="{% url 'admin:index' %}">ادمین</a></li>
+              <li class="ml-5"><a href="{% url 'show_all_order_item'  %}">سفارش</a></li>
+              {% endif %}
+            </ul> 
           {% else %} 
               <ul>
                 <li><a href="{% url 'log_in'%}">ورود</a></li>
@@ -121,34 +130,41 @@ crossorigin="anonymous"></script>
           <!-- Logo End -->
           <!-- Mini Cart Start-->
           <div class="col-table-cell col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            <div id="cart">
+            <div id="cart">  
               <button type="button" data-toggle="dropdown" data-loading-text="بارگذاری ..." class="heading dropdown-toggle">
+              {% if request.user.is_authenticated %}  
+                <i class="fa fa-user" aria-hidden="true"></i> <!-- User icon -->
+              {% endif %}  
               <span class="cart-icon pull-left flip"></span>
-              <span id="cart-total">{{cart|length}}م - {{total}} تومان</span></button>
+              <span id="cart-total">{{cart|length}}م - {{all_total_price}} تومان</span></button>
+              
               <ul class="dropdown-menu">
                 <li>
-                {% for item in Products %}
+                  {% for item in cart_items %}
                   <table class="table">
                     <tbody>
                       <tr>
-                        <td class="text-center"><a href="{% url 'product' item.id %}"><img class="img-thumbnail" title="کفش راحتی مردانه" 
-                          style="width: 80px; height: 80px;" alt="کفش راحتی مردانه" src="{{item.picture.url}}"></a></td>
-                        <td class="text-left"><a href="{% url 'product' item.id %}">{{item.name}}</a></td>
-                        {% for key,value in count.items %}
-                          {% if key == item.id|slugify %}
+                        <td class="text-center"><a href="{% url 'product' item.product.id %}"><img class="img-thumbnail" title="کفش راحتی مردانه" 
+                          style="width: 80px; height: 80px;" alt="کفش راحتی مردانه" src="{{item.product.picture.url}}"></a></td>
+                        <td class="text-left"><a href="{% url 'product' item.product.id %}">{{item.product.name}}</a></td>
                           <td class="text-right">{{value}}</td>
-                          {% endif %} 
-                        {% endfor %}
                         {% if item.especial %}
                           <td class="text-right">{{item.sale_price}} تومان</td>
                         {% else %}
                           <td class="text-right">{{item.price}} تومان</td>
                         {% endif %}
-                        <td class="text-center"><button class="btn btn-danger delete-product"  data-index={{item.id}} title="حذف" onClick="" type="button"><i class="fa fa-times"></i></button></td>
+                        <td class="text-right">{{item.color}}</td>
+                        
+                        <form method="post" action="{% url 'cart_delete' item.product.id item.color %}">
+                          {% csrf_token %}
+                          <td class="text-center"><button class="btn btn-danger delete-product" 
+                           data-index={{item.product.id}} title="حذف" onClick="" type="submit"><i class="fa fa-times"></i></button></td>
+                        </form>   
+                       
                       </tr>
                     </tbody>
                   </table>
-                {% endfor %}  
+                  {% endfor %}
                 </li>
                 <li>
                   <div>
@@ -156,7 +172,7 @@ crossorigin="anonymous"></script>
                       <tbody>
                         <tr>
                           <td class="text-right"><strong>جمع کل</strong></td>
-                          <td class="text-right">{{total}} تومان</td>
+                          <td class="text-right">{{all_total_price}} تومان</td>
                         </tr>
                         <tr>
                           <td class="text-right"><strong>مالیات</strong></td>
@@ -164,7 +180,7 @@ crossorigin="anonymous"></script>
                         </tr>
                         <tr>
                           <td class="text-right"><strong>قابل پرداخت</strong></td>
-                          <td class="text-right">{{total}}تومان</td>
+                          <td class="text-right">{{all_total_price}}تومان</td>
                         </tr>
                       </tbody>
                     </table>
@@ -172,7 +188,8 @@ crossorigin="anonymous"></script>
                   </div>
                 </li>
               </ul>
-            </div>
+             
+            </div>   
           </div>
           <!-- Mini Cart End-->
           <!-- جستجو Start-->
@@ -206,7 +223,7 @@ crossorigin="anonymous"></script>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav">
             <li><a class="home_link" title="خانه" href="{% url 'get_products' %}">خانه</a></li>
-            <li class="dropdown"><a href="{% url 'category' 'cloths' %}">مد و زیبایی</a>
+            <li class="dropdown"><a href="{% url 'category' 'لباس' %}">لباس</a>
               <div class="dropdown-menu">
               <ul>
                       <li><a href="category.html">آقایان <span>&rsaquo;</span></a>
@@ -242,7 +259,7 @@ crossorigin="anonymous"></script>
                     </ul>
               </div>
             </li>
-            <li class="dropdown"> <a href="{% url 'category' 'laps' %}">الکترونیکی</a>
+            <li class="dropdown"> <a href="{% url 'category' 'سفر' %}">کوهنوردی</a>
                   <div class="dropdown-menu">
                     <ul>
                       <li> <a href="category.html">لپ تاپ <span>&rsaquo;</span></a>
@@ -263,7 +280,7 @@ crossorigin="anonymous"></script>
                           </ul>
                         </div>
                       </li>
-                      <li> <a href="{% url 'category' 'cameras' %}">دوربین <span>&rsaquo;</span></a>
+                      <li> <a href="{% url 'category' 'دوربین' %}">دوربین <span>&rsaquo;</span></a>
                         <div class="dropdown-menu">
                           <ul>
                             <li> <a href="category.html">زیردسته های جدید</a></li>
@@ -290,7 +307,7 @@ crossorigin="anonymous"></script>
                     </ul>
                   </div>
                 </li>
-                <li class="dropdown"><a href="{% url 'category' 'shoes' %}">کفش</a>
+                <li class="dropdown"><a href="{% url 'category' 'کفش' %}">کفش</a>
                   <div class="dropdown-menu">
                     <ul>
                       <li><a href="category.html">آقایان</a> </li>
@@ -317,7 +334,7 @@ crossorigin="anonymous"></script>
                     </ul>
                   </div>
                 </li>
-                <li class="dropdown"> <a href="{% url 'category' 'watchs' %}">ساعت</a>
+                <li class="dropdown"> <a href="{% url 'category' 'ساعت' %}">ساعت</a>
                   <div class="dropdown-menu">
                     <ul>
                       <li> <a href="category.html">ساعت مردانه</a></li>
@@ -327,7 +344,7 @@ crossorigin="anonymous"></script>
                     </ul>
                   </div>
                 </li>
-                <li class="dropdown"><a href="{% url 'category' 'makeup' %}">زیبایی و سلامت</a>
+                <li class="dropdown"><a href="{% url 'category' 'ارایشی بهداشتی' %}">زیبایی و سلامت</a>
                   <div class="dropdown-menu">
                     <ul>
                       <li> <a href="category.html">عطر و ادکلن</a></li>
@@ -339,38 +356,9 @@ crossorigin="anonymous"></script>
                     </ul>
                   </div>
                 </li>
-            <li class="dropdown wrap_custom_block hidden-sm hidden-xs"><a>بلاک سفارشی</a>
-              <div class="dropdown-menu custom_block">
-                <ul>
-                  <li>
-                    <table>
-                      <tbody>
-                        <tr>
-                          <td><img alt="" src="{% static 'image/banner/cms-block.jpg'%}"></td>
-                          <td><img alt="" src="{% static 'image/banner/responsive.jpg'%}"></td>
-                          <td><img alt="" src="{% static 'image/banner/cms-block.jpg'%}"></td>
-                        </tr>
-                        <tr>
-                          <td><h4>بلاک های محتوا</h4></td>
-                          <td><h4>قالب واکنش گرا</h4></td>
-                          <td><h4>پشتیبانی ویژه</h4></td>
-                        </tr>
-                        <tr>
-                          <td>این یک بلاک مدیریت محتواست. شما میتوانید هر نوع محتوای html نوشتاری یا تصویری را در آن قرار دهید.</td>
-                          <td>این یک بلاک مدیریت محتواست. شما میتوانید هر نوع محتوای html نوشتاری یا تصویری را در آن قرار دهید.</td>
-                          <td>این یک بلاک مدیریت محتواست. شما میتوانید هر نوع محتوای html نوشتاری یا تصویری را در آن قرار دهید.</td>
-                        </tr>
-                        <tr>
-                          <td><strong><a class="btn btn-primary btn-sm" href="#">ادامه مطلب</a></strong></td>
-                          <td><strong><a class="btn btn-primary btn-sm" href="#">ادامه مطلب</a></strong></td>
-                          <td><strong><a class="btn btn-primary btn-sm" href="#">ادامه مطلب</a></strong></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </li>
-                </ul>
-              </div>
-            </li>
+            {% if request.user.is_authenticated %}    
+                <li><a href="{% url 'review' %}">پیگیری سفارش</a></li>
+            {% endif %}
             <li class="dropdown information-link"><a>برگه ها</a>
               <div class="dropdown-menu">
                 <ul>
@@ -402,6 +390,7 @@ crossorigin="anonymous"></script>
       <!-- Main آقایانu End-->
     </div>
     <!-- Header End-->
+     {% comment %}
     <script>
       $(document).on('click', '.delete-product', function(e){
          e.preventDefault();
@@ -421,6 +410,7 @@ crossorigin="anonymous"></script>
            error: function(xhr, errmsg, err){
            }
          })
-        })
+        }) 
     </script>
+     {% endcomment %}  
  

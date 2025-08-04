@@ -16,8 +16,9 @@
             <fieldset>
               <div class="form-group required">
                 <div class="mb-3 col-md-4">
-                  {% if form_image %}
-                      <img style="width: 200px; height: 200px; border-radius: 10px; border: 0ch;", src="{{ form_image.url }}"/>
+                  
+                  {% if profile.image %}
+                  <img style="width: 200px; height: 200px; border-radius: 10px; border: 0ch;", src="{{ profile.image.url }}"/>
                   {% endif %} 
                   {{ form_data.image }}
               </div>
@@ -54,20 +55,11 @@
                 {% endfor %}
               </div>
               <div class="form-group required">
-                <label class="col-md-4 col-sm-3 control-label" for="input-email">{{ form_data.address1.label }}</label>
+                <label class="col-md-4 col-sm-3 control-label" for="input-email">{{ form_data.address.label }}</label>
                 <div class="col-md-8 col-sm-9">
-                   {{ form_data.address1 }}
+                   {{ form_data.address }}
                 </div>
-                {% for error in form_data.address1.errors %}
-                     <div class="contuct_us_form"> {{ error }}</div>
-                {% endfor %}
-              </div>
-              <div class="form-group required">
-                <label class="col-md-4 col-sm-3 control-label" for="input-email">{{ form_data.address2.label }}</label>
-                <div class="col-md-8 col-sm-9">
-                   {{ form_data.address2 }}
-                </div>
-                {% for error in form_data.address2.errors %}
+                {% for error in form_data.address.errors %}
                      <div class="contuct_us_form"> {{ error }}</div>
                 {% endfor %}
               </div>
@@ -95,100 +87,6 @@
                    {{ form_data.zipcode }}
                 </div>
                 {% for error in form_data.zipcode.errors %}
-                     <div class="contuct_us_form"> {{ error }}</div>
-                {% endfor %}
-              </div>
-              <div class="form-group required">
-                <label class="col-md-4 col-sm-3 control-label" for="input-email">{{ form_data.country.label }}</label>
-                <div class="col-md-8 col-sm-9">
-                   {{ form_data.country }}
-                </div>
-                {% for error in form_data.country.errors %}
-                     <div class="contuct_us_form"> {{ error }}</div>
-                {% endfor %}
-              </div>
-            </fieldset>
-          <h2 class="title"> ادرس و مشخصات</h2>
-            <fieldset>
-              <div class="form-group required">
-                <label class="col-md-3 control-label" for="input-name">{{ shipping_form.shipping_fullname.label}}</label>
-                <div class="col-md-9 col-sm-9">
-                  {{ shipping_form.shipping_fullname }}
-                </div>
-                {% for error in shipping_form.shipping_fullname.errors %}
-                     <div class="contuct_us_form"> {{ error }}</div>
-                {% endfor %}
-              </div>
-              
-              <div class="form-group required">
-                <label class="col-md-4 col-sm-3 control-label" for="input-email">{{ shipping_form.shipping_phone.label }}</label>
-                <div class="col-md-8 col-sm-9">
-                   {{ shipping_form.shipping_phone }}
-                </div>
-                {% for error in shipping_form.shipping_phone.errors %}
-                     <div class="contuct_us_form"> {{ error }}</div>
-                {% endfor %}
-              </div>
-              <div class="form-group required">
-                <label class="col-md-4 col-sm-3 control-label" for="input-email">{{ shipping_form.shipping_email.label }}</label>
-                <div class="col-md-8 col-sm-9">
-                   {{ shipping_form.shipping_email }}
-                </div>
-                {% for error in shipping_form.shipping_email.errors %}
-                     <div class="contuct_us_form"> {{ error }}</div>
-                {% endfor %}
-              </div>
-              <div class="form-group required">
-                <label class="col-md-4 col-sm-3 control-label" for="input-email">{{ shipping_form.shipping_address1.label }}</label>
-                <div class="col-md-8 col-sm-9">
-                   {{ shipping_form.shipping_address1 }}
-                </div>
-                {% for error in shipping_form.shipping_address1.errors %}
-                     <div class="contuct_us_form"> {{ error }}</div>
-                {% endfor %}
-              </div>
-              <div class="form-group required">
-                <label class="col-md-4 col-sm-3 control-label" for="input-email">{{ shipping_form.shipping_address2.label }}</label>
-                <div class="col-md-8 col-sm-9">
-                   {{ shipping_form.shipping_address2 }}
-                </div>
-                {% for error in shipping_form.shipping_address2.errors %}
-                     <div class="contuct_us_form"> {{ error }}</div>
-                {% endfor %}
-              </div>
-              <div class="form-group required">
-                <label class="col-md-4 col-sm-3 control-label" for="input-email">{{ shipping_form.shipping_city.label }}</label>
-                <div class="col-md-8 col-sm-9">
-                   {{ shipping_form.shipping_city }}
-                </div>
-                {% for error in shipping_form.shipping_city.errors %}
-                     <div class="contuct_us_form"> {{ error }}</div>
-                {% endfor %}
-              </div>
-              <div class="form-group required">
-                <label class="col-md-4 col-sm-3 control-label" for="input-email">{{ shipping_form.shipping_state.label }}</label>
-                <div class="col-md-8 col-sm-9">
-                   {{ shipping_form.shipping_state }}
-                </div>
-                {% for error in shipping_form.shipping_state.errors %}
-                     <div class="contuct_us_form"> {{ error }}</div>
-                {% endfor %}
-              </div>
-              <div class="form-group required">
-                <label class="col-md-4 col-sm-3 control-label" for="input-email">{{ shipping_form.shipping_zipcode.label }}</label>
-                <div class="col-md-8 col-sm-9">
-                   {{ shipping_form.shipping_zipcode }}
-                </div>
-                {% for error in form_data.zipcode.errors %}
-                     <div class="contuct_us_form"> {{ error }}</div>
-                {% endfor %}
-              </div>
-              <div class="form-group required">
-                <label class="col-md-4 col-sm-3 control-label" for="input-email">{{ shipping_form.shipping_country.label }}</label>
-                <div class="col-md-8 col-sm-9">
-                   {{ shipping_form.shipping_country }}
-                </div>
-                {% for error in shipping_form.shipping_country.errors %}
                      <div class="contuct_us_form"> {{ error }}</div>
                 {% endfor %}
               </div>

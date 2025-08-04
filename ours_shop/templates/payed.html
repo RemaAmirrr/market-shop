@@ -1,0 +1,54 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load humanize %}
+
+
+{% block content %}
+<div id="container">
+    <div class="container">
+      <div class="row">
+        <!--Middle Part Start-->
+        <div id="content" class="col-sm-12">
+          <h1 class="title">تسویه </h1>
+          <div class="panel-body">
+            {% comment %}
+            {% if shipping_status %}
+              <div class="col-md-7">
+                <table class="table table-bordered">
+                  <tr>
+                  <td class="text-right"><strong>جمع کل:</strong></td>
+                  <td class="text-right" >{{ total_price|floatformat:2 }} تومان</td>
+                  </tr>
+                  <tr>
+                      <td class="text-right"><strong> هزینه ارسال :</strong></td>
+                      <td class="text-right">{{ shipping_amount|floatformat:2 }} تومان</td>
+                  <tr>
+                  <td class="text-right"><strong>مقدار نهایی :</strong></td>
+                  <td class="text-right">{{last_price|floatformat:2 }} تومان</td>
+                  </tr>
+              </table>
+            </div>
+            {% endif %}
+            {% endcomment %}
+          
+            {% for item in orders %}
+               {% if item.finaled %}
+                <div class="col-md-7">
+                  <table class="table table-bordered">
+                    <tr>
+                      <td class="text-right"><strong>جمع کل:</strong></td>
+                      <td class="text-right" >{{ item.total_price|floatformat:2 }} تومان</td>
+                      <td class="text-right"><a href="{% url 'show_items' item.id %}">جزییات سفارش</a></td>
+                    </tr>
+                </table>
+              </div> 
+              {% endif %}            
+            {% endfor %}
+          </div>
+          </div>
+        </div>
+        <!--Middle Part End -->
+      </div>
+    </div>
+</div>
+{% endblock %}
