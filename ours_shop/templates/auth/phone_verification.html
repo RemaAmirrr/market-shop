@@ -1,0 +1,641 @@
+
+
+<!-- templates/password_reset.html -->
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازیابی رمز عبور</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #06d6a0;
+            --danger: #ef476f;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 12px;
+            --shadow: 0 10px 20px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Vazirmatn, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .password-reset-container {
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: var(--light-gray);
+            position: relative;
+        }
+        
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+            transition: var(--transition);
+        }
+        
+        .step.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .step.completed {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        
+        .step-label {
+            position: absolute;
+            top: 50px;
+            width: 80px;
+            right: -20px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .step.active .step-label {
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .step.completed .step-label {
+            color: var(--secondary);
+        }
+        
+        .progress-bar {
+            position: absolute;
+            height: 4px;
+            background: var(--gray);
+            top: 50%;
+            right: 60px;
+            left: 60px;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: {{ progress_percent }}%;
+            transition: var(--transition);
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .step-content {
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+            text-align: right;
+        }
+        
+        .input-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            margin-top: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--light);
+        }
+        
+        .resend-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .resend-text {
+            color: var(--gray);
+        }
+        
+        .resend-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .resend-btn:hover {
+            color: var(--primary-dark);
+        }
+        
+        .resend-btn:disabled {
+            color: var(--gray);
+            cursor: not-allowed;
+        }
+        
+        .password-strength {
+            margin-top: 10px;
+            height: 6px;
+            background: var(--light-gray);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--danger);
+            transition: var(--transition);
+        }
+        
+        .password-strength-text {
+            font-size: 12px;
+            margin-top: 5px;
+            color: var(--gray);
+        }
+        
+        .password-rules {
+            margin-top: 15px;
+            padding-right: 20px;
+            font-size: 13px;
+            color: var(--gray);
+            list-style-position: inside;
+        }
+        
+        .password-rules li {
+            margin-bottom: 5px;
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .message.error {
+            background: rgba(239, 71, 111, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 71, 111, 0.3);
+        }
+        
+        .message.success {
+            background: rgba(6, 214, 160, 0.1);
+            color: #06a37c;
+            border: 1px solid rgba(6, 214, 160, 0.3);
+        }
+        
+        .message i {
+            margin-left: 10px;
+            font-size: 18px;
+        }
+        
+        .countdown {
+            display: inline-block;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .error-list {
+            color: var(--danger);
+            padding: 10px;
+            border-radius: var(--border-radius);
+            background-color: rgba(239, 71, 111, 0.1);
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .error-list ul {
+            padding-right: 20px;
+            margin: 5px 0;
+        }
+        
+        @media (max-width: 480px) {
+            .password-reset-container {
+                max-width: 100%;
+            }
+            
+            .progress-steps {
+                padding: 20px;
+            }
+            
+            .step-label {
+                font-size: 10px;
+                width: 60px;
+                right: -10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid var(--light-gray);
+            color: var(--gray);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="password-reset-container">
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-lock"></i>
+                </div>
+            </div>
+            <h1>بازیابی رمز عبور</h1>
+            <p>حساب کاربری خود را با تایید شماره تلفن بازیابی کنید</p>
+        </div>
+        
+        <div class="progress-steps">
+            <div class="step {% if step == 1 %}active{% elif step > 1 %}completed{% endif %}" id="step1">
+                <span>۱</span>
+                <div class="step-label">تلفن همراه</div>
+            </div>
+            <div class="step {% if step == 2 %}active{% elif step > 2 %}completed{% endif %}" id="step2">
+                <span>۲</span>
+                <div class="step-label">کد تایید</div>
+            </div>
+            <div class="step {% if step == 3 %}active{% endif %}" id="step3">
+                <span>۳</span>
+                <div class="step-label">رمز جدید</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+        
+        <div class="form-container">
+            <!-- Display form errors -->
+            {% if form.errors %}
+            <div class="message error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>لطفاً خطاهای زیر را اصلاح کنید:</span>
+                <div class="error-list">
+                    {{ form.errors }}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Step 1: Phone Verification -->
+            <div class="step-content {% if step == 1 %}active{% endif %}" id="stepContent1">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_phone">شماره تلفن همراه خود را وارد کنید</label>
+                        <div class="input-group">
+                            {{ form.phone }}
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                    </div>
+                    <button class="btn" type="submit" name="step" value="1">ارسال کد تایید</button>
+                </form>
+            </div>
+            
+            <!-- Step 2: Code Verification -->
+            <div class="step-content {% if step == 2 %}active{% endif %}" id="stepContent2">
+                {% if phone %}
+                <div class="message success">
+                    <i class="fas fa-check-circle"></i>
+                    <span>کد تایید به شماره {{ phone }} ارسال شد</span>
+                </div>
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_code">کد تایید را وارد کنید</label>
+                        <div class="input-group">
+                            {{ form.code }}
+                            <i class="fas fa-key"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="resend-container">
+                        <span class="resend-text">کد را دریافت نکرده‌اید؟</span>
+                        <button class="resend-btn" id="resendBtn" disabled>ارسال مجدد (<span class="countdown">۶۰</span>)</button>
+                    </div>
+                    
+                    <button class="btn" type="submit" name="step" value="2">تایید کد</button>
+                    <button class="btn btn-secondary" type="button" id="backToPhoneBtn">تغییر شماره تلفن</button>
+                </form>
+            </div>
+            
+            <!-- Step 3: New Password -->
+            <div class="step-content {% if step == 3 %}active{% endif %}" id="stepContent3">
+                <div class="message success">
+                    <i class="fas fa-check-circle"></i>
+                    <span>شماره تلفن با موفقیت تایید شد</span>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_new_password1">رمز عبور جدید</label>
+                        <div class="input-group">
+                            {{ form.new_password1 }}
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="password-strength">
+                            <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                        </div>
+                        <div class="password-strength-text" id="passwordStrengthText">قدرت رمز: ضعیف</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_new_password2">تکرار رمز عبور جدید</label>
+                        <div class="input-group">
+                            {{ form.new_password2 }}
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                    
+                    <ul class="password-rules">
+                        <li>حداقل ۸ کاراکتر داشته باشد</li>
+                        <li>حاوی حداقل یک حرف بزرگ</li>
+                        <li>حاوی حداقل یک عدد</li>
+                        <li>حاوی حداقل یک کاراکتر ویژه</li>
+                    </ul>
+                    
+                    <button class="btn" type="submit" name="step" value="3">تغییر رمز عبور</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© ۱۴۰۲ سامانه مدیریت کاربران. تمامی حقوق محفوظ است.</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const stepContent1 = document.getElementById('stepContent1');
+        const stepContent2 = document.getElementById('stepContent2');
+        const stepContent3 = document.getElementById('stepContent3');
+        const sendCodeBtn = document.querySelector('button[value="1"]');
+        const verifyCodeBtn = document.querySelector('button[value="2"]');
+        const resetPasswordBtn = document.querySelector('button[value="3"]');
+        const resendBtn = document.getElementById('resendBtn');
+        const backToPhoneBtn = document.getElementById('backToPhoneBtn');
+        const phoneInput = document.getElementById('id_phone');
+        const codeInput = document.getElementById('id_code');
+        const newPasswordInput = document.getElementById('id_new_password1');
+        const confirmPasswordInput = document.getElementById('id_new_password2');
+        const passwordStrengthBar = document.getElementById('passwordStrengthBar');
+        const passwordStrengthText = document.getElementById('passwordStrengthText');
+        
+        // Current step from Django
+        const currentStep = {{ step }};
+        
+        // Format phone number as user types
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 0) {
+                    value = value.substring(0, 11);
+                    
+                    if (value.length > 4) {
+                        value = value.substring(0, 4) + value.substring(4);
+                    }
+                    if (value.length > 8) {
+                        value = value.substring(0, 8)  + value.substring(8);
+                    }
+                }
+                
+                e.target.value = value;
+            });
+        }
+        
+        // Back to phone button
+        if (backToPhoneBtn) {
+            backToPhoneBtn.addEventListener('click', function() {
+                window.location.href = "{% url 'phone_verification' %}";
+            });
+        }
+        
+        // Resend code functionality
+        if (resendBtn) {
+            function startResendTimer() {
+                let timeLeft = 60;
+                resendBtn.disabled = true;
+                const countdownSpan = resendBtn.querySelector('.countdown');
+                countdownSpan.textContent = timeLeft;
+                
+                const timer = setInterval(() => {
+                    timeLeft--;
+                    countdownSpan.textContent = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        resendBtn.disabled = false;
+                        countdownSpan.textContent = '';
+                        resendBtn.innerHTML = 'ارسال مجدد';
+                    }
+                }, 1000);
+            }
+            
+            startResendTimer();
+            
+            resendBtn.addEventListener('click', function() {
+                // In a real app, you would make an AJAX request to resend the code
+                alert('کد تایید جدید ارسال شد');
+                startResendTimer();
+            });
+        }
+        
+        // Password strength checker
+        if (newPasswordInput) {
+            newPasswordInput.addEventListener('input', function() {
+                const password = newPasswordInput.value;
+                const strength = calculatePasswordStrength(password);
+                
+                passwordStrengthBar.style.width = `${strength.percentage}%`;
+                passwordStrengthBar.style.backgroundColor = strength.color;
+                passwordStrengthText.textContent = `قدرت رمز: ${strength.text}`;
+                passwordStrengthText.style.color = strength.color;
+            });
+        }
+        
+        function calculatePasswordStrength(password) {
+            let strength = 0;
+            let text = 'ضعیف';
+            let color = '#ef476f'; // Red
+            let percentage = 0;
+            
+            if (password.length >= 8) strength += 25;
+            if (/[A-Z]/.test(password)) strength += 25;
+            if (/\d/.test(password)) strength += 25;
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 25;
+            
+            percentage = strength;
+            
+            if (strength >= 75) {
+                text = 'قوی';
+                color = '#06d6a0'; // Green
+            } else if (strength >= 50) {
+                text = 'متوسط';
+                color = '#ffd166'; // Yellow
+            }
+            
+            return { text, color, percentage };
+        }
+    </script>
+</body>
+</html>

@@ -123,6 +123,37 @@
 #                   order_form = FinalForm(initial=initial_data) 
 #             realy_price = total
 
+ # email = forms.EmailField(
+    #     label="ایمیل",
+    #     widget=forms.EmailInput(attrs={"class" : "form-control", "placeholder" : "ایمیل خود را وارد کنید"}), validators=[
+    #     validators.EmailValidator("!ایمیل نامعتبر است")
+    # ])
+
+
+ # def clean_email(self):
+    #     email = self.cleaned_data.get('email')
+    #     qurey = user.objects.filter(email=email)
+    #     if qurey.exists():
+    #         raise forms.ValidationError("این ایمیل قبلا ثبت شده است")
+    #     return email
+
+
+# @login_required(login_url="/login")
+# def profile_sidebar(request):
+#     context = {}
+#     return render(request, "profile/profile_sidebar.html", context)
+
+# @login_required(login_url="/login")
+# def profile_panel(request):
+#     context = {}
+#     return render(request, "profile/profile_panel.html", context)
+
+# @login_required(login_url="/login")
+# def profile_order(request):
+#     context = {}
+#     return render(request, "profile/profile_order.html", context)
+
+
 # def search(request): if you want for run search by funcation base you can use this code but for pagination i dont get any result 
 #     if request.method == 'POST':
 #         searched = request.POST['searched']
@@ -458,4 +489,215 @@
 #                     add_price = (value*item_price) 
 #                     one_price.append(add_price)
                     
-#         return one_price   
+#         return one_price 
+# 
+# 
+# 
+# 
+# 
+# # 
+# def forget_password(request):
+#     forget_password = Forget_Password(request.POST or None)
+#     if request.method == "POST":
+#         if forget_password.is_valid():
+#             # phone_number = forget_password.cleaned_data.get("number_phone")
+#             # sms = ghasedakpack.Ghasedak(GHASEDAK_API_KEY)
+#             # good_line_number_for_sending_otp = '30005088'
+#             # template_name_in_ghasedak_me_site = "markt_shop"
+#             # n=random.randint(100000, 999999)
+#             # answer = sms.verification({'receptor' : phone_number, 'linenumber' : good_line_number_for_sending_otp, 'type' : '1', 'template': template_name_in_ghasedak_me_site,'param1' : n})
+#             # if answer:
+#             #     return redirect("get_code", code=n) 
+#             # else:
+#             #     messages(request, "ارسال پیام موفقیت امیز نبود دوباره امتحان کنید")
+#             return redirect("get_code", code=123987)   
+# 
+# 
+# 
+# from django.contrib.auth.models import (
+#     BaseUserManager, AbstractBaseUser
+# )
+
+# class MyAccountManager(BaseUserManager):
+#     def create_user(self, email, username, password=None):
+#         if not email:
+#             raise ValueError('Users must have an email address')
+#         if not username:
+#             raise ValueError('Users must have a username')
+
+#         user = self.model(
+#             email=self.normalize_email(email),
+#             username=username
+#         )
+#         user.set_password(password)
+#         user.save(using=self._db)
+#         return user
+
+#     def create_superuser(self, email, username, password):
+#         user = self.create_user(
+#             email=self.normalize_email(email),
+#             password=password,
+#             username=username
+#         )
+#         user.is_admin = True
+#         user.is_staff = True
+#         user.is_superuser = True
+#         user.save(using=self._db)
+#         return user
+
+
+# def get_profile_image_filepath(self, filename):
+#     return 'profile/profile_images/' + str(self.pk) + '/profile_image.png'
+
+# def get_default_profile_image():
+#     return 'profile/profile_default/default_profile_image.png'
+
+# class Account(AbstractBaseUser):
+#     email = models.EmailField(max_length=60, unique=True)
+#     username = models.CharField(max_length=30, unique=True)
+#     date_joined = models.DateTimeField(auto_now_add=True)
+#     last_login = models.DateTimeField(auto_now=True)
+#     is_admin = models.BooleanField(default=False)
+#     is_active = models.BooleanField(default=True)
+#     is_staff = models.BooleanField(default=False)
+#     is_superuser = models.BooleanField(default=False)
+#     profile_image = models.ImageField(max_length=255, upload_to=get_profile_image_filepath, null=True, blank=True, default=get_default_profile_image)
+#     hide_email = models.BooleanField(default=True)
+
+
+#     USERNAME_FIELD = 'email'
+#     REQUIRED_FIELDS = ['username']
+#     objects = MyAccountManager()
+
+#     def __str__(self):
+#         return self.username
+
+#     def has_perm(self, perm, obj=None):
+#         "Does the user have a specific permission?"
+#         # Simplest possible answer: Yes, always
+#         return True
+
+#     def has_module_perms(self, app_label):
+#         "Does the user have permissions to view the app `app_label`?"
+#         # Simplest possible answer: Yes, always
+#         return True
+
+
+
+#         
+
+#     else:
+#         context = {"forget_password" : forget_password} 
+#     return render(request, "auth/forget_password.html", context)  
+
+# def get_code(request, code):
+#     context = {"code" : code}
+#     form = Get_Code_Form(request.POST or None)
+#     if request.method == "POST":
+#         if form.is_valid():
+#             Code = form.cleaned_data.get("code")
+#             if Code == code:
+#                 pass
+#             else: 
+#                 messages.error(request, "کد وارد شده صحیح نیباشد")
+#     return render(request, "get_code.html", context)        
+
+
+# from django.http import HttpResponse
+# from .forms import AccountAuthenticationForm, RegistrationForm, AccountUpdateForm
+# from django.contrib.auth import authenticate, login, logout
+# from .models import Account
+# from django.conf import settings
+
+
+# def login_view(request):
+#     context = {}
+#     user = request.user
+#     if request.POST:
+#         form = AccountAuthenticationForm(request.POST)
+#         if form.is_valid():
+#             print('form', form.cleaned_data)
+#             email = form.cleaned_data.get('email')
+#             raw_password = form.cleaned_data.get('password')
+#             user = authenticate(email=email, password=raw_password)
+#             if user:
+#                 login(request, user)
+#                 return redirect('account:home')
+#     else:
+#         form = AccountAuthenticationForm()
+    
+#     context['login_form'] = form
+#     return render(request, 'account/login.html', context)
+
+# def register_view(request, *args, **kwargs):
+#     user = request.user
+#     if user.is_authenticated:
+#         return HttpResponse("You are already authenticated as " + str(user.email))
+#     context = {}
+#     if request.POST:
+#         form = RegistrationForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             email = form.cleaned_data.get('email').lower()
+#             raw_password = form.cleaned_data.get('password1')
+#             account = authenticate(email=email, password=raw_password)
+#             login(request, account)
+#             destination = kwargs.get("next")
+#             if destination:
+#                 return redirect(destination)
+#             return redirect("account:home")
+#         else:
+#             context['registration_form'] = form
+
+#     else:
+#         form = RegistrationForm()
+#         context['registration_form'] = form
+#     return render(request, 'account/register.html', context)
+
+# def logout_view(request):
+#     logout(request)
+#     return redirect('account:home')
+
+# def edit_account_view(request, *args, **kwargs):
+#     if not request.user.is_authenticated:
+#         return redirect('account:login')
+#     user_id = kwargs.get('user_id')
+#     account = Account.objects.get(pk=user_id)
+
+#     dic = {}
+
+#     if account.pk != request.user.pk:
+#         return HttpResponse("You cannot edit this profile")
+#     if request.POST:
+#         form = AccountUpdateForm(request.POST, request.FILES, instance=request.user)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('account:profile', user_id=account.pk)
+#         else:
+#             form = AccountUpdateForm(request.POST, instance=request.user,
+#             initial = {
+#                 'id' : account.id,
+#                 'email' : account.email,
+#                 'username' : account.username,
+#                 'profile_image' : account.profile_image
+#             }
+#             )
+#             dic['form'] = form
+
+#     else:
+#         form = AccountUpdateForm(
+#             initial = {
+#             'id' : account.id,
+#             'email' : account.email,
+#             'username' : account.username,
+#             'profile_image' : account.profile_image
+#             }
+#         )
+#         dic['form'] = form
+#         dic['user'] = account
+
+#     dic['DATA_UPLOAD_MAX_MEMORY_SIZE'] = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
+#     return render(request, 'account/profile.html', dic) 
+# 
+#  path("forget_password/", views.forget_password, name="forget_password"),
+#  path("get_code/", views.get_code, name="get_code"), 

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from shop.models import Products, Category, WishList, Gallery, Bander, Rating, Color, Size
+from shop.models import Products, Category, WishList,Bander, Rating, Comment_product
 from django.views.generic.list import ListView
 from django.contrib import messages
 from django.db.models import Q
@@ -9,7 +9,7 @@ from django import template
 from django.views.generic.edit import FormView
 from django.views.generic.detail import DetailView
 from django.contrib.contenttypes.models import ContentType
-from .forms import RatingForm
+from .forms import RatingForm, Comment_Form
 from django.db.models import Avg
 
 
@@ -25,12 +25,14 @@ def get_products(request):
         "products":products,
         "baner" : baner
     }
-    return render(request, "home.html", context)
+    return render(request, "shop/home.html", context)
 
 def product(request, pk):
     user_rating = None
+    comment_form = Comment_Form()
     full_sale = Products.objects.filter(full_sale=True, active=True)
     product = get_object_or_404(Products, id=pk, active=True)
+    comment_product = Comment_product.objects.filter(product=product).all()
     realyted_product = Products.objects.filter(category=product.category).annotate(avg_rating=Avg('ratings__stars'))
     especial_product = Products.objects.filter(especial=True, active=True)
     # Calculate average rating
@@ -46,7 +48,7 @@ def product(request, pk):
             return redirect('product', pk=product.id)
     else:
         form = RatingForm()
-    return render(request, 'product.html', {
+    return render(request, 'shop/product.html', {
         'product': product,
         'form': form,
         'average_rating': round(average_rating, 1) if average_rating else 0,
@@ -54,6 +56,8 @@ def product(request, pk):
         "especial_product" : especial_product,
         "realyted_product" : realyted_product,
         "user_rating" : user_rating,
+        "comment_form" : comment_form,
+        "comments" : comment_product
     })
 
 def category(request, cat):
@@ -74,10 +78,10 @@ def category(request, cat):
             "products" : products,
             "full_sale" : full_sale
         }
-        return render(request, "category.html", context)
+        return render(request, "shop/category.html", context)
     
 class Search(ListView): 
-    template_name = "search.html"
+    template_name = "shop/search.html"
     paginate_by = 12
     def get_queryset(self):
         query = self.request.GET.get("q")
@@ -122,5 +126,20 @@ def wishlist(request):
          wishlist = WishList.objects.filter(user=request.user).all()
          return render(request, "wishlist.html", {"wishlist" : wishlist}) 
       wishlist = WishList.objects.all()   
-      return render(request, "wishlist.html", {"wishlist" : wishlist})   
+      return render(request, "shop/wishlist.html", {"wishlist" : wishlist})
+
+def comment_product (request, id):
+    form = Comment_Form(request.POST)
+    product = Products.objects.filter(id=id).first()
+    if request.method == "POST":
+      if form.is_valid():
+        name = form.cleaned_data['name']
+        description = form.cleaned_data['description']
+        comment = Comment_product.objects.create(user=request.user, product=product, name=name, description=description)
+        comment.save()
+        return redirect('product', id)
+      else:
+          return messages.error(request, "فرم معتبر نیست")
+       
+
 

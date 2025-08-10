@@ -7,13 +7,14 @@ import os
 import random
 from django.contrib.auth.models import User
 from authentication.models import Profile
-from cart.models import OrderItem
+# from cart.models import OrderItem
 from django.utils.text import slugify
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.db.models import Avg
+from django_jalali.db.models import jDateField
 
 
 def get_file_extension(file):
@@ -65,9 +66,6 @@ class Category(models.Model):
     def __str__(self):
         return self.name
     
-
-
-
 Status = (
 
 ("0%", 0),
@@ -117,8 +115,8 @@ class Products(models.Model):
     def color(self):
         return Color.objects.filter(product=self)
     
-    def orders(self):
-        return OrderItem.objects.filter(product=self).count()
+    # def orders(self):
+    #     return OrderItem.objects.filter(product=self).count()
     
     def specification(self):
         return Specification.objects.filter(product=self)
@@ -132,6 +130,20 @@ class Products(models.Model):
             self.slug = slugify(self.name)
         super(Products, self).save(*args, **kwargs)
 
+class Comment_product(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="کاربر")
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name="محصول")
+    name = models.CharField(max_length=40, verbose_name="نام")
+    description = models.TextField(max_length=2000, verbose_name="توضیع")
+    create_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "نظر"
+        verbose_name_plural = "نظرات"
+
+    def __str__(self):
+        return self.name     
+        
 class Rating(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='ratings')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -147,10 +159,6 @@ class Bander(models.Model):
     def __str__(self):
         return self.name 
 
-    class Meta:
-        verbose_name_plural = "بنرها"        
-    
-   
 class Gallery(models.Model):
     product = models.ForeignKey(Products, on_delete=models.SET_NULL, null=True, blank=True)
     image = models.FileField(upload_to="product",  null=True, blank=True)

@@ -4,23 +4,30 @@ from .forms import LoginForm, RegisterForm, UserUpdateForm, Forget_Password #Get
 from .models import Profile
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-# import ghasedakpack
+from .models import PasswordResetCode
+from .forms import PhoneVerificationForm, CodeVerificationForm, PersianSetPasswordForm, PersianPasswordChangeForm
+from .utils import send_sms  # Implement SMS sending function
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse_lazy
 import random
+
+User = get_user_model()
 
 def log_in(request):
     login_form = LoginForm(request.POST or None)
-    print(request.user.is_authenticated)
     if login_form.is_valid():
-        username = login_form.cleaned_data.get("username")
+        phone = login_form.cleaned_data.get("phone")
         password = login_form.cleaned_data.get("password")
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=phone, password=password)
         if user is not None:
             login(request, user)
             messages.success(request, ("کاربر وارد شد"))
             return redirect ("get_products")
         else:
+            
+            messages.success(request, ("پسورد یا شماره موبایل درست نیست"))
             return redirect ("log_in")
-            messages.success(request, ("مشکلی در  ورود پیش امده است"))
+            
     context = {"login_form" : login_form,}    
     return render(request, "auth/log_in.html", context)   
 
@@ -28,11 +35,10 @@ user = get_user_model()
 def register(request):
     register_form = RegisterForm(request.POST or None)
     if register_form.is_valid():
-       username = register_form.cleaned_data.get("username")
-       email = register_form.cleaned_data.get("email")
+       phone = register_form.cleaned_data.get("phone")
        password = register_form.cleaned_data.get("password")
-       user.objects.create_user(username=username, email=email, password=password)
-       account = authenticate(username=username, password=password)
+       user.objects.create_user(username=phone, password=password)
+       account = authenticate(username=phone, password=password)
        if account:
            login(request, account) 
            return redirect("get_products")       
@@ -60,166 +66,114 @@ def profile_setting(request):
         "form_data": form,
         "profile": profile
     }
-    return render(request, 'profile/deepseekprofile.html', context)
+    return render(request, 'auth/deepseekprofile.html', context)
 
-def forget_password(request):
-    forget_password = Forget_Password(request.POST or None)
-    if request.method == "POST":
-        if forget_password.is_valid():
-            # phone_number = forget_password.cleaned_data.get("number_phone")
-            # sms = ghasedakpack.Ghasedak(GHASEDAK_API_KEY)
-            # good_line_number_for_sending_otp = '30005088'
-            # template_name_in_ghasedak_me_site = "markt_shop"
-            # n=random.randint(100000, 999999)
-            # answer = sms.verification({'receptor' : phone_number, 'linenumber' : good_line_number_for_sending_otp, 'type' : '1', 'template': template_name_in_ghasedak_me_site,'param1' : n})
-            # if answer:
-            #     return redirect("get_code", code=n) 
-            # else:
-            #     messages(request, "ارسال پیام موفقیت امیز نبود دوباره امتحان کنید")
-            return redirect("get_code", code=123987)           
 
-    else:
-        context = {"forget_password" : forget_password} 
-    return render(request, "auth/forget_password.html", context)  
-
-def get_code(request, code):
-    context = {"code" : code}
-    form = Get_Code_Form(request.POST or None)
-    if request.method == "POST":
+def phone_verification(request):
+    if request.method == 'POST':
+        form = PhoneVerificationForm(request.POST)
         if form.is_valid():
-            Code = form.cleaned_data.get("code")
-            if Code == code:
-                pass
-            else: 
-                messages.error(request, "کد وارد شده صحیح نیباشد")
-    return render(request, "get_code.html", context)        
-
-@login_required(login_url="/login")
-def profile_sidebar(request):
-    context = {}
-    return render(request, "profile/profile_sidebar.html", context)
-
-@login_required(login_url="/login")
-def profile_panel(request):
-    context = {}
-    return render(request, "profile/profile_panel.html", context)
-
-@login_required(login_url="/login")
-def profile_order(request):
-    context = {}
-    return render(request, "profile/profile_order.html", context)
-
-
-from django.http import HttpResponse
-from .forms import AccountAuthenticationForm, RegistrationForm, AccountUpdateForm
-from django.contrib.auth import authenticate, login, logout
-from .models import Account
-from django.conf import settings
-
-
-def login_view(request):
-    context = {}
-    user = request.user
-    if request.POST:
-        form = AccountAuthenticationForm(request.POST)
-        if form.is_valid():
-            print('form', form.cleaned_data)
-            email = form.cleaned_data.get('email')
-            raw_password = form.cleaned_data.get('password')
-            user = authenticate(email=email, password=raw_password)
-            if user:
-                login(request, user)
-                return redirect('account:home')
+            phone = form.cleaned_data['phone']
+            
+            # Check if user exists
+            if not user.objects.filter(username=phone).exists():
+                messages.error(request, "شماره تلفن ثبت نشده است")
+                return render(request, 'auth/phone_verification.html', {
+                    'form': form,
+                    'step': 1,
+                    'progress_percent': 0
+                })
+            
+            # Generate and save code
+            code = ''.join(random.choices('0123456789', k=6))
+            print("==============================================",code)
+            PasswordResetCode.objects.filter(phone=phone).delete()  # Remove old codes
+            reset_code = PasswordResetCode(phone=phone, code=code)
+            reset_code.save()
+            
+            # In a real app, you would send the SMS here
+            # send_sms(to=phone, body=f"کد تایید شما: {code}")  # we not register in gasdak site 
+            print(f"DEBUG: Verification code for {phone}: {code}")
+            
+            request.session['reset_phone'] = phone
+            return redirect('code_verification')
     else:
-        form = AccountAuthenticationForm()
+        form = PhoneVerificationForm()
     
-    context['login_form'] = form
-    return render(request, 'account/login.html', context)
+    return render(request, 'auth/phone_verification.html', {
+        'form': form,
+        'step': 1,
+        'progress_percent': 0
+    })
 
-def register_view(request, *args, **kwargs):
-    user = request.user
-    if user.is_authenticated:
-        return HttpResponse("You are already authenticated as " + str(user.email))
-    context = {}
-    if request.POST:
-        form = RegistrationForm(request.POST)
+def code_verification(request):
+    phone = request.session.get('reset_phone')
+    if not phone:
+        return redirect('phone_verification')
+    
+    if request.method == 'POST':
+        form = CodeVerificationForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            try:
+                reset_code = PasswordResetCode.objects.get(
+                    phone=phone, 
+                    code=code,
+                    is_used=False
+                )
+                if reset_code.is_valid():
+                    reset_code.is_used = True
+                    reset_code.save()
+                    request.session['verified'] = True
+                    return redirect('password_reset_new')
+                else:
+                    messages.error(request, "کد منقضی شده است")
+            except PasswordResetCode.DoesNotExist:
+                messages.error(request, "کد وارد شده نامعتبر است")
+    else:
+        form = CodeVerificationForm()
+    
+    return render(request, 'auth/phone_verification.html', {
+        'form': form,
+        'step': 2,
+        'phone': phone,
+        'progress_percent': 50
+    })
+
+def password_reset_new(request):
+    if not request.session.get('verified') or not request.session.get('reset_phone'):
+        return redirect('phone_verification')
+    
+    phone = request.session['reset_phone']
+    try:
+        user = User.objects.get(username=phone)
+    except Profile.DoesNotExist:
+        messages.error(request, "کاربر یافت نشد")
+        return redirect('phone_verification')
+    
+    if request.method == 'POST':
+        form = PersianSetPasswordForm(user, request.POST)
         if form.is_valid():
             form.save()
-            email = form.cleaned_data.get('email').lower()
-            raw_password = form.cleaned_data.get('password1')
-            account = authenticate(email=email, password=raw_password)
-            login(request, account)
-            destination = kwargs.get("next")
-            if destination:
-                return redirect(destination)
-            return redirect("account:home")
-        else:
-            context['registration_form'] = form
-
+            
+            # Cleanup session
+            del request.session['reset_phone']
+            del request.session['verified']
+            
+            messages.success(request, "رمز عبور با موفقیت تغییر یافت!")
+            return redirect('log_in')
     else:
-        form = RegistrationForm()
-        context['registration_form'] = form
-    return render(request, 'account/register.html', context)
-
-def logout_view(request):
-    logout(request)
-    return redirect('account:home')
-
-
-# def profile_view(request, *args, **kwargs):
-#     # account = request.user
-#     context = {}
-#     user_id = kwargs.get('user_id')
-#     try:
-#         account = Account.objects.get(pk=user_id)
-#     except:
-#         return HttpResponse('Someting went wrong')
+        form = PersianSetPasswordForm(user)
     
-#     context['user'] = account
-    
-#     return render(request, 'account/profile.html', context)
+    return render(request, 'auth/phone_verification.html', {
+        'form': form,
+        'step': 3,
+        'progress_percent': 100
+    })
 
-
-def edit_account_view(request, *args, **kwargs):
-    if not request.user.is_authenticated:
-        return redirect('account:login')
-    user_id = kwargs.get('user_id')
-    account = Account.objects.get(pk=user_id)
-
-    dic = {}
-
-    if account.pk != request.user.pk:
-        return HttpResponse("You cannot edit this profile")
-    if request.POST:
-        form = AccountUpdateForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('account:profile', user_id=account.pk)
-        else:
-            form = AccountUpdateForm(request.POST, instance=request.user,
-            initial = {
-                'id' : account.id,
-                'email' : account.email,
-                'username' : account.username,
-                'profile_image' : account.profile_image
-            }
-            )
-            dic['form'] = form
-
-    else:
-        form = AccountUpdateForm(
-            initial = {
-            'id' : account.id,
-            'email' : account.email,
-            'username' : account.username,
-            'profile_image' : account.profile_image
-            }
-        )
-        dic['form'] = form
-        dic['user'] = account
-
-    dic['DATA_UPLOAD_MAX_MEMORY_SIZE'] = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
-    return render(request, 'account/profile.html', dic)
-
+class PersianPasswordChangeView(PasswordChangeView):
+    form_class = PersianPasswordChangeForm
+    template_name = 'auth/password_change.html'
+    success_url = reverse_lazy('password_change_done')
 
 

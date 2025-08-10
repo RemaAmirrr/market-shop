@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect, reverse
+from django.shortcuts import render, get_object_or_404, redirect
 from .cart import Cart
 from shop.models import Products, WishList
 from django.http import JsonResponse
@@ -38,7 +38,7 @@ def checkout(request, realy_price):
    del request.session['cart']
    request.session.modified = True     
    request.session['order_id'] = order.id          
-   return render (request, "checkout.html", {"order_form" : order_form, "order" : order,
+   return render (request, "cart/checkout.html", {"order_form" : order_form, "order" : order,
    "realy_price" : realy_price, "orderitem" : orderitem})
 
 @login_required
@@ -57,9 +57,9 @@ def payedview(request):
          total_price = order.total_price
          
          messages.success(request, 'دزخواست  خرید شما ثبت و در حال برسی است برای پرداخت و اتمام خرید در منوبار تب پیگیری سفارش را دنبال کنید ')
-         return render (request, "orderitem.html", {"total_price" : total_price, "order_item" : order_item})
+         return render (request, "cart/orderitem.html", {"total_price" : total_price, "order_item" : order_item})
    else:
-       return render(request, "orderitem.html", {}) 
+       return render(request, "cart/orderitem.html", {}) 
        
 @login_required
 def review(request):         
@@ -79,7 +79,7 @@ def review(request):
                 context['order_form'] = order_form
                 context['realy_price'] = order.total_price
                 messages.success(request, 'شما سفارش را تایید نکرده اید')
-                return render (request, "checkout.html", context)     
+                return render (request, "cart/checkout.html", context)     
         else:
                 context={"order" : order, "order_item" : order_item, "total_price" : order.total_price }
                 shipping_amount = get_object_or_404(FinalModel, order_id=order_id)
@@ -91,7 +91,7 @@ def review(request):
                         context['final_price'] = final_price   
                     else:
                         messages.success(request, ' پس از براورد هزینه ارسال دکمه پرداخت ظاهر شده و شما میتوانید برای پرداخت اقدام کنید سفارش شما در حال برسی است لطفا صبور باشید') 
-                    return render (request, "orderitem.html", context)
+                    return render (request, "cart/orderitem.html", context)
                 else:
                    
                     final_price = Decimal(order.total_price) + Decimal(shipping_amount.shipping_cost)
@@ -99,11 +99,12 @@ def review(request):
                     context['final_price'] = final_price
                     context['payment_status'] = order.payment_status
                     context['send_status'] = order.send_status   
-                    return render (request, "orderitem.html", context)
+                    context['order'] = order  
+                    return render (request, "cart/orderitem.html", context)
 
    else:
         messages.success(request, ' شما یا سفارشی ثبت نکرده اید یا از حساب خود خارج شده اید برای پیگری سفارش از هدر سایت حساب کاربری سفارشات را دنبال کنید' ) 
-        return render (request, "orderitem.html", context)       
+        return render (request, "cart/orderitem.html", context)       
 
 @login_required          
 def show_items(request, item_id):
@@ -117,12 +118,12 @@ def show_items(request, item_id):
       context["final_price"] = final_price
     else:
         messages.success(request, "سفارش  شما در حال برسی است پس از تعین هزینه ارسال دکمه پرداخت ظاهر میشود و برای پرداخت اقدام کنید")  
-    return render(request, "orderitem_history.html", context) 
+    return render(request, "cart/orderitem_history.html", context) 
 
 @login_required
 def order_history(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'order_history.html', {'orders': orders})
+    return render(request, 'cart/order_history.html', {'orders': orders})
 
 def add_to_cart(request):
     cart = Cart(request)
@@ -199,7 +200,7 @@ def cart_detail(request):
         context['off_price'] = off_price
         context['realy_price'] = realy_price
         # messages.success(request,("کد تخفیف اعمال شده است"))    
-    return render (request, "cart.html", context)
+    return render (request, "cart/cart.html", context)
       
 def add_cart_product(request, id):
     cart = Cart(request)
@@ -245,7 +246,7 @@ def delete_wishlist (request, id):
       messages.success(request, ("این محصول از لیست ارزوها حزف شد"))
    return redirect("wishlist")     
  
-# all admin view
+
 def show_all_order_item(request):
     context={}
     if request.method == "POST":
@@ -260,7 +261,7 @@ def show_all_order_item(request):
                 context['massage'] = "سفارشی بااین ایدی پیدا نشد"
         else:
             context['massage'] = "لطفا یک ایدی وارد کنید"             
-    return render(request, "show_item.html", context)
+    return render(request, "cart/show_item.html", context)
 
 
 

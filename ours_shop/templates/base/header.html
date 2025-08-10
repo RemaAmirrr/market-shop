@@ -23,10 +23,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/stars.css'%}" />
 <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css'%}" /> -->
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
- 
-crossorigin="anonymous"></script>
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="crossorigin="anonymous"></script>
 <!-- CSS Part End-->
 </head>
 <body>
@@ -136,8 +133,13 @@ crossorigin="anonymous"></script>
                 <i class="fa fa-user" aria-hidden="true"></i> <!-- User icon -->
               {% endif %}  
               <span class="cart-icon pull-left flip"></span>
-              <span id="cart-total">{{cart|length}}م - {{all_total_price}} تومان</span></button>
-              
+              <span id="cart-total">{{cart|length}}م - 
+                {% if realy_price %}
+                  {{realy_price}}
+                {% else %}
+                  {{all_total_price}}
+                {% endif %}
+                تومان</span></button>       
               <ul class="dropdown-menu">
                 <li>
                   {% for item in cart_items %}
@@ -160,7 +162,6 @@ crossorigin="anonymous"></script>
                           <td class="text-center"><button class="btn btn-danger delete-product" 
                            data-index={{item.product.id}} title="حذف" onClick="" type="submit"><i class="fa fa-times"></i></button></td>
                         </form>   
-                       
                       </tr>
                     </tbody>
                   </table>
@@ -171,24 +172,34 @@ crossorigin="anonymous"></script>
                     <table class="table table-bordered">
                       <tbody>
                         <tr>
-                          <td class="text-right"><strong>جمع کل</strong></td>
-                          <td class="text-right">{{all_total_price}} تومان</td>
-                        </tr>
-                        <tr>
-                          <td class="text-right"><strong>مالیات</strong></td>
-                          <td class="text-right">11880 تومان</td>
+                          <td class="text-right"><strong>کسری کوپن</strong></td>
+                          {% if off_price %}
+                          <td class="text-right">{{off_price|floatformat:2}} تومان</td>
+                          {% else %}
+                          <td class="text-right">0 تومان</td>
+                          {% endif %}
                         </tr>
                         <tr>
                           <td class="text-right"><strong>قابل پرداخت</strong></td>
-                          <td class="text-right">{{all_total_price}}تومان</td>
+                          <td class="text-right">
+                            {% if realy_price %}
+                              {{realy_price}}تومان</td>
+                            {% else %}
+                              {{all_total_price}}
+                            {% endif %}    
                         </tr>
                       </tbody>
                     </table>
-                    <p class="checkout"><a href="{% url 'cart_summery' %}" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> مشاهده سبد</a>&nbsp;&nbsp;&nbsp;<a href="checkout.html" class="btn btn-primary"><i class="fa fa-share"></i> تسویه حساب</a></p>
+                    {% if cart|length and realy_price %}
+                      <p class="checkout"><a href="{% url 'cart_summery' %}" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> مشاهده سبد</a>&nbsp;&nbsp;&nbsp;
+                      <a href="{%  url 'check_out' realy_price %} " class="btn btn-primary"><i class="fa fa-share"></i> تسویه حساب</a></p>
+                    {% elif cart|length and all_total_price %} 
+                      <p class="checkout"><a href="{% url 'cart_summery' %}" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> مشاهده سبد</a>&nbsp;&nbsp;&nbsp;
+                      <a href="{%  url 'check_out' all_total_price %} " class="btn btn-primary"><i class="fa fa-share"></i> تسویه حساب</a></p>
+                    {% endif %}
                   </div>
                 </li>
               </ul>
-             
             </div>   
           </div>
           <!-- Mini Cart End-->
@@ -389,8 +400,7 @@ crossorigin="anonymous"></script>
       </nav>
       <!-- Main آقایانu End-->
     </div>
-    <!-- Header End-->
-     {% comment %}
+    {% comment %}
     <script>
       $(document).on('click', '.delete-product', function(e){
          e.preventDefault();
@@ -412,5 +422,5 @@ crossorigin="anonymous"></script>
          })
         }) 
     </script>
-     {% endcomment %}  
+    {% endcomment %}  
  

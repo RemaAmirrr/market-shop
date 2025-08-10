@@ -42,12 +42,15 @@ INSTALLED_APPS = [
     # all app that installed
     'django.contrib.humanize',
     'django_render_partial',
+    'django_jalali',
+    'django_madval',
     
 
     # all app that we make
     'shop',
     'cart',
     'authentication',
+
 ]
 
 MIDDLEWARE = [

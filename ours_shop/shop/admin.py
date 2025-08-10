@@ -42,6 +42,7 @@ admin.site.register(models.WishList, Wishlistadmin)
 admin.site.register(models.Bander)
 admin.site.register(models.Rating)
 admin.site.register(models.Color)
+admin.site.register(models.Comment_product)
 
 # admin.site.register(models.Notification, NotificationAdmin)
 

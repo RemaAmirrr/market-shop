@@ -2,12 +2,14 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.core import validators
 from .models import Profile
-# from django.core.validators import FileExtensionValidator
-from .models import Account
+from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
+from django.core.validators import RegexValidator
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
-
+user = get_user_model()
 
 class ContactusForm(forms.Form):
 
@@ -16,50 +18,35 @@ class ContactusForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea(attrs={"class" : "form-control"}))
 
 class LoginForm(forms.Form):
-    username = forms.CharField(widget=forms.TextInput(attrs={"class" : "form-control", "placeholder": "place input you username"})) 
-    password = forms.CharField(widget=forms.PasswordInput(attrs={"class" : "form-control"}))   
+    phone = forms.CharField(
+        label="شماره موبایل:",
+        widget=forms.TextInput(attrs={"class" : "form-control", "placeholder": "لطفا شماره موبایلی که با ان ثبت نام کرده اید وارد کنید"})) 
+    password = forms.CharField(
+        label="پسورد:",
+        widget=forms.PasswordInput(attrs={"class" : "form-control"}))   
 
-    def clean_username(self):
-        userName = self.cleaned_data.get("username")
-        passWord = self.cleaned_data.get("password")
-        query = user.objects.filter(username=userName, password=passWord).all()
-
-        if query.exists():
-             raise forms.ValidationError("پسورد یا نام کاربری اشتباه است")              
-        return userName    
-
-    username = forms.CharField(widget=forms.TextInput(attrs={"class" : "form-control", "placeholder": "place input you username"})) 
-    password = forms.CharField(widget=forms.PasswordInput(attrs={"class" : "form-control"}))   
-
-    def clean_username(self):
-        userName = self.cleaned_data.get("username")
-        passWord = self.cleaned_data.get("password")
-        query = user.objects.filter(username=userName, password=passWord).all()
-
-        if query.exists():
-             raise forms.ValidationError("پسورد یا نام کاربری اشتباه است")              
-        return userName
-
+    # def clean(self): 
+    #     phone = self.cleaned_data.get("phone")
+    #     passWord = self.cleaned_data.get("password")
+    #     query = user.objects.filter(username=phone, password=passWord).first()
+    #     print("=================================================",query)
+    #     if query == None:
+    #          raise forms.ValidationError("پسورد یا شماره اشتباه است")              
+    #     return phone    
 
 class Forget_Password(forms.Form):
     number_phone = forms.CharField(
         label="موبایل",
         widget=forms.TextInput(attrs={"class" : "form-control", "placeholder": "لطفا موبایل خود را وارد کنید"})) 
    
-
-user = get_user_model()
 class RegisterForm(forms.Form):
     
-    username = forms.CharField(
-        label="نام کاربری",
-        widget=forms.TextInput(attrs={"class" : "form-control", "placeholder" : "نام کاربری را وارد کنید"}), validators=[ 
+    phone = forms.CharField(
+        label="شمار موبایل ",
+        widget=forms.NumberInput(attrs={"class" : "form-control", "placeholder" : "نام کاربری شما شماره موبایل شما میباشد وارد کنید"}), validators=[ 
         validators.MaxLengthValidator(limit_value=20, message="نام کاربری نباید از ۲۰ کارکتر بیشتر باشد")
     ])
-    email = forms.EmailField(
-        label="ایمیل",
-        widget=forms.EmailInput(attrs={"class" : "form-control", "placeholder" : "ایمیل خود را وارد کنید"}), validators=[
-        validators.EmailValidator("!ایمیل نامعتبر است")
-    ])
+
     password = forms.CharField(
         label="پسورد ",
         widget=forms.PasswordInput(attrs={"class" : "form-control",}))
@@ -68,23 +55,15 @@ class RegisterForm(forms.Form):
         label="تایید پسورد",
         widget=forms.PasswordInput(attrs={"class" : "form-control"})) 
     
-    def clean_username(self):
-        userName = self.cleaned_data.get("username")
-        query = user.objects.filter(username=userName)
+    def clean_phone(self):
+        phone = self.cleaned_data.get("phone")
+        query = user.objects.filter(username=phone).all()
 
         if query.exists():
-            raise forms.ValidationError("این نام قبلا ثبت شده است")
-        return userName
+            raise forms.ValidationError("این شماره قبلا ثبت شده است")
+        return phone
            
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        qurey = user.objects.filter(email=email)
-        if qurey.exists():
-            raise forms.ValidationError("این ایمیل قبلا ثبت شده است")
-        return email
-    
     def clean(self):
-
         data = self.cleaned_data
         password1 = self.cleaned_data.get("password")
         password2 = self.cleaned_data.get("password2")
@@ -92,13 +71,8 @@ class RegisterForm(forms.Form):
         if password1 != password2:
             raise forms.ValidationError("پسوردها یکی نیستند")
         return data
-    
-    
+       
 class UserUpdateForm(forms.ModelForm):
-    
-    # widgets = {
-    #         'image': forms.FileInput(attrs={'class': 'form-control'}),
-    #     }
 
     image = forms.ImageField(
         label='',
@@ -106,9 +80,6 @@ class UserUpdateForm(forms.ModelForm):
         widget=forms.FileInput(attrs={'class': 'form-control'}),
         # validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])]
     )
-    
-    
-    # image = forms.ImageField(label='Upload Image')
 
     full_name = forms.CharField(
         label='نام کامل',
@@ -159,81 +130,111 @@ class UserUpdateForm(forms.ModelForm):
         )
         exclude = ['user', 'description']
 
-# from .models import Account
-# from django.contrib.auth import authenticate
-# from django.contrib.auth.forms import UserCreationForm
+class PhoneVerificationForm(forms.Form):
+    phone = forms.CharField(
+        label="تلفن همراه",
+        max_length=11,
+        validators=[
+            RegexValidator(
+                regex=r'^09\d{9}$',
+                message="شماره تلفن باید با 09 شروع شود و 11 رقم باشد"
+            )
+        ],
+        widget=forms.TextInput(attrs={
+            'placeholder': '09123456789',
+            'class': 'form-control'
+        })
+    )
 
+class CodeVerificationForm(forms.Form):
+    code = forms.CharField(
+        label="کد تایید",
+        max_length=6,
+        min_length=6,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'کد ۶ رقمی',
+            'class': 'form-control'
+        })
+    )
 
-class AccountAuthenticationForm(forms.ModelForm):
-    password = forms.CharField(label='Password', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.CharField(label='email', widget=forms.TextInput(attrs={'class': 'form-control'}))
-
-    class Meta:
-        model = Account
-        fields = ('email', 'password')
-
-    def clean(self):
-        if self.is_valid():
-            email = self.cleaned_data['email']
-            password = self.cleaned_data['password']
-            if not authenticate(email=email, password=password):
-                raise forms.ValidationError("Invalid login!")
-
-
-class RegistrationForm(UserCreationForm):
-
-    class Meta:
-        model = Account
-        fields = ('email', 'username', 'password1', 'password2')
-
+class PersianSetPasswordForm(SetPasswordForm):
+    """
+    A form that lets a user set a new password without entering the old password
+    with Persian translations and custom validation messages.
+    """
+    new_password1 = forms.CharField(
+        label="رمز عبور جدید",
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'رمز عبور جدید را وارد کنید',
+            'class': 'form-control',
+            'autocomplete': 'new-password'
+        }),
+        strip=False,
+        help_text=_(
+            "رمز عبور شما باید حداقل 8 کاراکتر داشته باشد و از اعداد و حروف تشکیل شده باشد."
+        ),
+    )
     
-    def clean_email(self):
-        email = self.cleaned_data['email'].lower()
-        try:
-            account = Account.objects.exclude(pk=self.instance.pk).get(email=email)
-        except Account.DoesNotExist:
-            return email
-        raise forms.ValidationError('Email "%s" is already in use.' % account)
+    new_password2 = forms.CharField(
+        label="تکرار رمز عبور جدید",
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'رمز عبور جدید را تکرار کنید',
+            'class': 'form-control',
+            'autocomplete': 'new-password'
+        }),
+        strip=False,
+    )
 
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(user, *args, **kwargs)
+        self.fields['new_password1'].widget.attrs.pop("autofocus", None)
 
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        try:
-            account = Account.objects.exclude(pk=self.instance.pk).get(username=username)
-        except Account.DoesNotExist:
-            return username
-        raise forms.ValidationError('Username "%s" is already in use.' % username)
-
-
-class AccountUpdateForm(forms.ModelForm):
-    profile_image = forms.ImageField(widget=forms.FileInput)
-
-    class Meta:
-        model = Account
-        fields = ('username', 'email', 'profile_image')
-
-    def clean_email(self):
-        email = self.cleaned_data['email'].lower()
-        try:
-            account = Account.objects.exclude(pk=self.instance.pk).get(email=email)
-        except Account.DoesNotExist:
-            return email
-        raise forms.ValidationError('Email "%s" is already in use.' % account)
-
-
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        try:
-            account = Account.objects.exclude(pk=self.instance.pk).get(username=username)
-        except Account.DoesNotExist:
-            return username
-        raise forms.ValidationError('Username "%s" is already in use.' % username)
+    def clean_new_password2(self):
+        password1 = self.cleaned_data.get('new_password1')
+        password2 = self.cleaned_data.get('new_password2')
+        
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("رمزهای عبور وارد شده یکسان نیستند")
+        return password2
 
     def save(self, commit=True):
-        account = super(AccountUpdateForm, self).save(commit=False)
-        account.username = self.cleaned_data['username']
-        account.email = self.cleaned_data['email'].lower()
-        account.profile_image = self.cleaned_data['profile_image']
+        password = self.cleaned_data["new_password1"]
+        self.user.set_password(password)
         if commit:
-            account.save()
-        return account
+            self.user.save()
+        return self.user  
+
+# accounts/forms.py
+
+
+class PersianPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        label=_("رمز عبور فعلی"),
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'رمز عبور فعلی خود را وارد کنید',
+            'autocomplete': 'current-password'
+        }),
+        error_messages={'required': 'لطفاً رمز عبور فعلی را وارد کنید'}
+    )
+    new_password1 = forms.CharField(
+        label=_("رمز عبور جدید"),
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'رمز عبور جدید خود را وارد کنید',
+            'autocomplete': 'new-password',
+            'id': 'newPass'
+        }),
+        error_messages={'required': 'لطفاً رمز عبور جدید را وارد کنید'}
+    )
+    new_password2 = forms.CharField(
+        label=_("تکرار رمز عبور جدید"),
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'رمز عبور جدید خود را تکرار کنید',
+            'autocomplete': 'new-password'
+        }),
+        error_messages={'required': 'لطفاً تکرار رمز عبور جدید را وارد کنید'}
+    )
+

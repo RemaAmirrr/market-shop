@@ -4,14 +4,13 @@ from django.db.models.signals import post_save
 import os
 import random
 
-
 Status = (
 
-("0","0%"),
-("10", "10%"),
-("20", "20%"),
-("30", "30%"),
-("50", "50%"),
+    ("0","0%"),
+    ("10", "10%"),
+    ("20", "20%"),
+    ("30", "30%"),
+    ("50", "50%"),
 
 )   
 
@@ -25,11 +24,9 @@ class Coupon(models.Model):
     class Meta:
         verbose_name = "کوپن"
         verbose_name_plural = "کوپنها "
-     
     def __str__(self):
         return str(self.title)
     
-
 CHOISE_PIMENT = [     
     ('1', ' درگاه بانک ملت'),
     ('2', 'درگاه زرین پال'),
